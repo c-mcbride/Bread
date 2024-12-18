@@ -1,56 +1,44 @@
 import java.util.Scanner;
 
 public class BankAccountMenu {
-    //For now this design will take a bank account object that is passed to it
-    private BankAccount account;
+    private BankAccount bankAccount;
+    private Scanner scanner = new Scanner(System.in);
 
-    //Constructor for that accepts a BankAccountObject
-    public BankAccountMenu(BankAccount account){
-        this.account = account;
+    public BankAccountMenu(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
-    public void showMenu(){
-        //Create scanner to read input
-        Scanner scanner = new Scanner (System.in);
+    public void showMenu() {
         int choice;
-
-        //Menu loop
-        do{
-            System.out.println("Welcome to the Bank Account Menu");
-            System.out.println("1. Display balance");
-            System.out.println("2. Add Funds");
-            System.out.println("3. Subtract Money");
+        do {
+            System.out.println("\nAccount Menu:");
+            System.out.println("1. View Balance");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
             System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
 
-            switch(choice){
+            switch (choice) {
                 case 1:
-                    account.displayBalance();
-                    System.out.println("------------------------");
+                    System.out.println("Balance: " + bankAccount.getBalance());
                     break;
                 case 2:
-                    System.out.println("Enter the amount to add: ");
-                    int amountToAdd = scanner.nextInt();
-                    account.addToBalance(amountToAdd);
-                    System.out.println("------------------------");
+                    System.out.print("Enter deposit amount: ");
+                    double depositAmount = scanner.nextDouble();
+                    bankAccount.deposit(depositAmount);
                     break;
                 case 3:
-                    System.out.println("Enter the amount to subtract: ");
-                    int amountToSubtract = scanner.nextInt();
-                    account.subtractFromBalance(amountToSubtract);
-                    System.out.println("------------------------");
+                    System.out.print("Enter withdrawal amount: ");
+                    double withdrawalAmount = scanner.nextDouble();
+                    bankAccount.withdraw(withdrawalAmount);
                     break;
                 case 4:
-                    System.out.println("Exiting Account Modification Sub-routine");
-                    System.out.println("------------------------");
+                    System.out.println("Exiting Account Menu...");
                     break;
                 default:
-                    System.out.println("Invalid choice, please try again");
-                    System.out.println("------------------------");
+                    System.out.println("Invalid choice, please try again.");
             }
-        }
-        while(choice != 4);
-
-        scanner.close();
+        } while (choice != 4);
     }
 }
