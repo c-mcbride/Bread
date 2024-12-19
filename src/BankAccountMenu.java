@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+import java.math.BigDecimal;
 public class BankAccountMenu {
     private BankAccount bankAccount;
     private Scanner scanner = new Scanner(System.in);
@@ -9,7 +9,7 @@ public class BankAccountMenu {
     }
 
     public void showMenu() {
-        int choice;
+        int choice = -1;
         do {
             System.out.println("\nAccount Menu:");
             System.out.println("1. View Balance");
@@ -17,25 +17,47 @@ public class BankAccountMenu {
             System.out.println("3. Withdraw");
             System.out.println("4. Exit");
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline character
+            }
+            else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine(); // Consume invalid input
+                continue;
+            }
 
             try{
                 switch (choice) {
                     case 1:
-                        System.out.println("Balance: " + bankAccount.getBalance());
+                        System.out.println("Balance: " + MoneyUtils.formatCurrency(bankAccount.getBalance()));
                         break;
                     case 2:
                         //Print confirmation here to decouple Print statements for core functions
                         System.out.print("Enter deposit amount: ");
-                        double depositAmount = scanner.nextDouble();
-                        double deposited = bankAccount.deposit(depositAmount);
-                        System.out.println("Deposited: $" + deposited);
+                        if(scanner.hasNextBigDecimal()){
+                            BigDecimal depositAmount = scanner.nextBigDecimal();
+                            BigDecimal deposited = bankAccount.deposit(depositAmount);
+                            System.out.println("Deposited: $" + MoneyUtils.formatCurrency(deposited)); //Nice formatted currency for display
+                        }
+                        else{
+                            scanner.next();//Consume invalid input
+                            throw new IllegalArgumentException("Invalid input. Please enter a numeric value.");
+                        }
+
                         break;
                     case 3:
                         System.out.print("Enter withdrawal amount: ");
-                        double withdrawalAmount = scanner.nextDouble();
-                        double withdrawn = bankAccount.withdraw(withdrawalAmount);
-                        System.out.println("Withdrew: $" + withdrawn);
+                        if(scanner.hasNextBigDecimal()){
+                            BigDecimal withdrawalAmount = scanner.nextBigDecimal();
+                            BigDecimal withdrawn = bankAccount.withdraw(withdrawalAmount);
+                            System.out.println("Withdrew: $" + MoneyUtils.formatCurrency(withdrawn));
+                        }
+                        else{
+                            scanner.next(); //Consume invalid input
+                            throw new IllegalArgumentException("Invalid input. Please enter a numeric value. ");
+                        }
                         break;
                     case 4:
                         System.out.println("Exiting Account Menu...");

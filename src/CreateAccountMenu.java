@@ -1,12 +1,12 @@
 import java.util.Scanner;
-
+import java.math.BigDecimal;
 //Creates account and sends the data to the BankAccount class.
 public class CreateAccountMenu {
     private Scanner scanner = new Scanner(System.in);
 
     public BankAccount createAccount() throws IllegalArgumentException{
         String name = getValidName();
-        double initialDeposit = getValidInitialDeposit();
+        BigDecimal initialDeposit = getValidInitialDeposit();
         return new BankAccount(name, initialDeposit);
     }
 
@@ -23,14 +23,14 @@ public class CreateAccountMenu {
         }
     }
 
-    private double getValidInitialDeposit(){
+    private BigDecimal getValidInitialDeposit(){
         while(true){
             System.out.println("Enter initial deposit amount: ");
-            if(scanner.hasNextDouble()){
-                double amount = scanner.nextDouble();
+            if(scanner.hasNextBigDecimal()){
+                BigDecimal amount = scanner.nextBigDecimal();
                 scanner.nextLine(); //Consume newline
 
-                if(amount >= 0){
+                if(amount.compareTo(BigDecimal.ZERO) >= 0){
                     return amount;
                 }
                 System.out.println("Error: Deposit amount cannot be negative.");

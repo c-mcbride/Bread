@@ -1,22 +1,19 @@
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.NumberFormat;
 
-
-//Single responsiblity: hold account info and is able to provide balance, deposit orwithdraw.
+//Single responsiblity: hold account info and is able to provide balance, deposit or withdraw.
 public class BankAccount {
     private String accountHolderName;
     private BigDecimal balance;
 
     public BankAccount(String accountHolderName, BigDecimal initialBalance) {
-        if(accountHolderName == null || accountHolderName.trim(). isEmpty()){
+        if(accountHolderName == null || accountHolderName.trim().isEmpty()){
             throw new IllegalArgumentException("Account holder name cannot be null or empty");
         }
         if(initialBalance.compareTo(BigDecimal.ZERO) < 0){
-            throw new IllegalArgumentException("Initial balance cannot be negative. ")
+            throw new IllegalArgumentException("Initial balance cannot be negative. ");
         }
         this.accountHolderName = accountHolderName;
-        this.balance = initialBalance.setScale(2, RoundingMode.HALF_EVEN);
+        this.balance = MoneyUtils.round(initialBalance); //Use the MoneyUtils class
     }
 
     public String getAccountHolderName() {
@@ -27,24 +24,28 @@ public class BankAccount {
         return balance;
     }
 
-
-
-    //Refactor to return values or throw an exception so that print statements are coupled with core functions
-    public double deposit(double amount) {
-        if (amount > 0) {
-            balance += amount;
-            return amount;
-        } else {
-            throw new IllegalArgumentException("Invalid deposit mount. ");
-        }
+    public String getFormattedBalance(){
+        return MoneyUtils.formatCurrency(balance);
     }
 
-    public double withdraw(double amount) {
-        if (amount > 0 && amount <= balance) {
-            balance -= amount;
-            return amount;
-        } else {
-            throw new IllegalArgumentException("Invalid or insufficent funds. ");
+    //isValidAmount makes sure that the entered amount is greater than zero
+    public BigDecimal deposit(BigDecimal amount){
+        if(!MoneyUtils.isValidAmount(amount)){ //If isValidAmount returns false, meaning value is less than zero
+            throw new IllegalArgumentException("Deposit amount must be greater than zero.");
         }
+        balance = balance.add(MoneyUtils.round(amount));
+        return MoneyUtils.round(amount);
     }
+
+    public BigDecimal withdraw(BigDecimal amount){
+        if(!MoneyUtils.isValidAmount(amount)){
+            throw new IllegalArgumentException("Withdrawal amount must be greater than zero.");
+        }
+        if(amount.compareTo(balance) > 0){
+            throw new IllegalArgumentException("Insufficient funds for this withdrawal.");
+        }
+        balance = balance.subtract(MoneyUtils.round(amount));
+        return MoneyUtils.round(amount);
+    }
+
 }
