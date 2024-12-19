@@ -1,9 +1,17 @@
 import java.util.Scanner;
 import java.math.BigDecimal;
-//Creates account and sends the data to the BankAccount class.
+/*
+ * Holds the menu for the creating an account for the first time.
+ * Gathers the account holder name, and inital balance
+ */
 public class CreateAccountMenu {
     private Scanner scanner = new Scanner(System.in);
 
+    /*
+     * Constructs bank account by calling getValidName() and initial deposit
+     * @returns BankAccount Object with input validation
+     * @throws illegal argument exception if name or balance are not the correct format
+     */
     public BankAccount createAccount() throws IllegalArgumentException{
         String name = getValidName();
         BigDecimal initialDeposit = getValidInitialDeposit();
@@ -11,7 +19,11 @@ public class CreateAccountMenu {
     }
 
 
-    //Creating yet another seperation of responsibilites by putting the input validation functions here. These can be overwritten later
+    /*
+     * Makes sure that a name is entered and is not empty
+     * @returns input validated account nmae
+     * @throws illegal argument exception if the amount is less than 1 or if the balance is too low
+     */
     private String getValidName(){
         while (true){
             System.out.print("Enter account holder name: ");
@@ -23,6 +35,11 @@ public class CreateAccountMenu {
         }
     }
 
+    /*
+     * Validates initial deposit by making sure that it is greater than 0
+     * @returns validated deposit info
+     * @throws illegal argument exception if the amount is less than 1 or if the balance is too low
+     */
     private BigDecimal getValidInitialDeposit(){
         while(true){
             System.out.println("Enter initial deposit amount: ");

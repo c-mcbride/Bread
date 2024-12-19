@@ -1,6 +1,9 @@
 import java.util.Scanner;
 
-//Manages the application state: i.e the BankAccount Instance and the Main Menu Loop
+/*
+ * Runs the console menu for the application. Will not be used in javafx application but used here for programming
+ * purposes. 
+ */
 public class BreadApp {
     private BankAccount bankAccount;
     private Scanner scanner = new Scanner(System.in);

@@ -2,7 +2,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
-//This class will be used to cleanly convert numeric representations in a format that is used for money
+/*
+     * The primary function of this class is to work with numbers in bankers format
+     * This will hopefully ensure that the doubles that are entered are operated on
+     * in a way that is consistent with money.
+     */
 public class MoneyUtils {
     private static final int SCALE = 2; //Two decimal places
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
