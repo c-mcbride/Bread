@@ -5,37 +5,40 @@ public class CreateAccountMenu {
     private Scanner scanner = new Scanner(System.in);
 
     public BankAccount createAccount() throws IllegalArgumentException{
-        String name = "";
-        double initialDeposit = -1;
+        String name = getValidName();
+        double initialDeposit = getValidInitialDeposit();
+        return new BankAccount(name, initialDeposit);
+    }
 
-        //Get the account holders name
-        while (name.isEmpty()){
-            System.out.println("Enter account holder's name: ");
-            name = scanner.nextLine().trim();
-            if(name.isEmpty()){
-                throw new IllegalArgumentException("Name cannot be empty.");
+
+    //Creating yet another seperation of responsibilites by putting the input validation functions here. These can be overwritten later
+    private String getValidName(){
+        while (true){
+            System.out.print("Enter account holder name: ");
+            String name = scanner.nextLine().trim();
+            if(!name.isEmpty()){
+                return name;
             }
+            System.out.println("Error: Name cannot be empty. Please try again.");
         }
+    }
 
-        boolean validDeposit = false;
-        while(!validDeposit){
+    private double getValidInitialDeposit(){
+        while(true){
             System.out.println("Enter initial deposit amount: ");
             if(scanner.hasNextDouble()){
-                initialDeposit = scanner.nextDouble();
-                if(initialDeposit >= 0){
-                    validDeposit = true;
+                double amount = scanner.nextDouble();
+                scanner.nextLine(); //Consume newline
+
+                if(amount >= 0){
+                    return amount;
                 }
-                else{
-                    throw new IllegalArgumentException("Deposit amount cannot be negative");
-                }
+                System.out.println("Error: Deposit amount cannot be negative.");
             }
             else{
-                scanner.next();
-                throw new IllegalArgumentException("Invalid input. Please enter a numeric value");
+                scanner.nextLine(); //Consume invalid input
+                System.out.println("Error: Invalid input. Please enter a numeric value. ");
             }
         }
-
-        //Return the newly constructed BankAccout object with valid parameters
-        return new BankAccount(name, initialDeposit);
     }
 }
