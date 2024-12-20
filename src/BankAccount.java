@@ -1,6 +1,6 @@
 import java.math.BigDecimal;
 
-/*
+/**
  * Represents a bank account with basic operations for managing balance
  * Responsiblities:
  * -Store account holder name
@@ -34,11 +34,11 @@ public class BankAccount {
         return MoneyUtils.formatCurrency(balance);
     }
 
-    /*
+    /**
      * Adds money to the account of a given amount
      * @param amount to deposit, must be non-negative
      * @returns the deposited amount if sucessfull
-     * @throws illegal argument exception if param is less than 1 
+     * @throws illegal argument exception if param is less than 1
      */
     public BigDecimal deposit(BigDecimal amount){
         if(!MoneyUtils.isValidAmount(amount)){ //If isValidAmount returns false, meaning value is less than zero
@@ -48,7 +48,7 @@ public class BankAccount {
         return MoneyUtils.round(amount);
     }
 
-    /*
+    /**
      * Takes money out of the account of the given amount
      * @param amount to withdraw, must be non-negative
      * @returns the withdrawn amount if sucessfull

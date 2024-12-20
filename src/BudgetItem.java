@@ -1,6 +1,6 @@
 import java.math.BigDecimal;
 
-/*
+/**
  * Budget items are used as categories that the user is budgeting for
  * Responsiblities:
  * -Contains the name of the item (groceries, gas etc)
@@ -28,7 +28,7 @@ public class BudgetItem {
         this.amountToSpend = BigDecimal.ZERO;
     }
 
-    /*
+    /**
      * Add money to budget category
      * @param amount to add to category
      * @returns updated amount avaliable for the category
@@ -40,6 +40,22 @@ public class BudgetItem {
         amountToSpend = amountToSpend.add(amountToAdd);
         return amountToSpend;
     }
+
+    /**
+     * Take money from budget category. Can be negative
+     * @param amount to subtract from category
+     * @return updated amount avaliable for category
+     */
+    public BigDecimal subtractMoneyFromCategory(BigDecimal amountToSpend){
+        if (amountToSpend == null || !MoneyUtils.isValidAmount(amountToSpend)){
+            throw new IllegalArgumentException("Amount to spend must be greater than 0");
+        }
+
+        //This subtracts the money left over for the category to spend and return it, this can be negative
+        amountToSpend = this.amountToSpend.subtract(MoneyUtils.round(amountToSpend));
+        return amountToSpend;
+    }
+
 
      /**
      * Get the name of the budget item.
