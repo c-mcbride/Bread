@@ -1,7 +1,7 @@
 # Bread Java Project
 
 This is a simple Java project named "Bread". It starts as a console application and will later integrate JavaFX for a graphical user interface. The goal is to create a budget application
-useful for budgeting decisions moment to moment. This will be presented with a clean ui and darkmode, hopefully with a dracula like theme. 
+useful for budgeting decisions moment to moment. This will be presented with a clean ui and darkmode, hopefully with a dracula like theme.
 
 ## Installation
 
@@ -20,3 +20,25 @@ useful for budgeting decisions moment to moment. This will be presented with a c
 ## License
 
 This project is licensed under the MIT License.
+
+
+##Class descriptions
+###BankAccount
+-Stores account holder information and balance
+-Handles deposits and withdrawl operations using 'BigDecimal'
+
+##BankAccountMenu
+-Provides functionality for account management for console application
+-Used to seperate core functionality from menu controls
+-Allows users to view balance, deposit, withdraw or exit
+
+###BreadApp
+-Holds logic for console menu
+
+###CreateAccountMenu
+-Interacts with the user to create a new account
+-Validates user input for name and initial deposit
+
+###MoneyUtils
+-Contains utility methods for finincial operations
+-Ensures proper rounding and formatting for currency
