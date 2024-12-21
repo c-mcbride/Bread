@@ -12,7 +12,7 @@ public class MoneyUtils {
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
 
 
-    /*
+    /**
      * Rounds a BigDecimal to two decimal places using HALF_EVEN which is bankers rounding
      * @param value to be rounded
      * @returns rounded value
@@ -26,7 +26,7 @@ public class MoneyUtils {
         return value.setScale(SCALE, ROUNDING_MODE);
     }
 
-     /*
+     /**
      * Takes a number and formats it to a dollar value
      * @param value to be formatted as currency
      * @returns entered valued as currency
@@ -41,7 +41,7 @@ public class MoneyUtils {
         return currencyFormat.format(value);
     }
 
-     /*
+     /**
      * Takes a value and checks to make sure it is a dollar value is not negative
      * @param value to be checked
      * @returns boolean indicating if it is non-negative.
