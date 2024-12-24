@@ -9,23 +9,23 @@ import java.math.BigDecimal;
  */
 public class BudgetItem {
     private String budgetItemName; //What is this item called?
-    private String category; //Fixed or variable?
+    private BudgetType type; //Enum list for allowed categories
     private BigDecimal amountToSpend; //How much is left?
 
-    public BudgetItem(String budgetItemName, String category, BigDecimal amountToSpend){
+    public BudgetItem(String budgetItemName, BudgetType type, BigDecimal amountToSpend){
         if(budgetItemName == null || budgetItemName.trim().isEmpty()){
             throw new IllegalArgumentException("Budget item name cannot be null or empty")
         }
-        if(category == null || category.trim().isEmpty()){
-            throw new IllegalArgumentException("category cannot be empty or null");
+        if(type == null){
+            throw new IllegalArgumentException("Type cannot be null");
         }
         if(amountToSpend == null || amountToSpend.compareTo(BigDecimal.ZERO) < 0){
             throw new IllegalArgumentException("Amount to spend cannot be null or negative when budget item is created");
         }
 
         this.budgetItemName = budgetItemName;
-        this.category = category;
-        this.amountToSpend = BigDecimal.ZERO;
+        this.type = type;
+        this.amountToSpend = amountToSpend; //Keep an eye on this later, this may produce unwanted behavior
     }
 
     /**
@@ -67,10 +67,10 @@ public class BudgetItem {
 
     /**
      * Get the category of the budget item.
-     * @return the budget item category
+     * @return the budget item Type
      */
-    public String getCategory() {
-        return category;
+    public BudgetType getType() {
+        return type;
     }
 
     /**
@@ -79,5 +79,14 @@ public class BudgetItem {
      */
     public BigDecimal getAmountToSpend() {
         return amountToSpend;
+    }
+
+    @Override
+    public String toString() {
+        return "BudgetItem{" +
+                "budgetItemName='" + budgetItemName + '\'' +
+                ", type=" + type +
+                ", amountToSpend=" + amountToSpend +
+                '}';
     }
 }
