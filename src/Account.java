@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.math.BigDecimal;
 
@@ -24,16 +25,23 @@ public class Account {
         return accountName;
     }
 
-    public List<BankAccount> getBankAccounts(){
-        return bankAccounts;
+    //Returning an unmodifiable view to prevent external code from modifying this directly
+    public List<BankAccount> getBankAccounts() {
+        return Collections.unmodifiableList(bankAccounts);
     }
-
+    
     /**
      * Adds to the fixed expenses budget Item list
      * @param name name of the budget item
      * @param amount amount of money to add to the item on creation
      */
     public void addFixedBudgetItem(String name, BigDecimal amount){
+        if(name == null || name.isBlank()){
+            throw new IllegalArgumentException("Budget item name cannot be null or blank");
+        }
+        if(amount == null || amount.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("Amount must be a non-negative value");
+        }
         fixedExpenses.add(new BudgetItem(name, BudgetType.FIXED, amount));
     }
 
@@ -43,10 +51,14 @@ public class Account {
      * @param amount amount of money to add once the item is created
      */
     public void addVariableBudgetItem(String name, BigDecimal amount){
+        if(name == null || name.isBlank()){
+            throw new IllegalArgumentException("Budget item name cannot be null or blank");
+        }
+        if(amount == null || amount.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("Amount must be a non-negative value");
+        }
         variableExpenses.add(new BudgetItem(name, BudgetType. VARIABLE, amount));
     }
-
-
 
     //Methods to add/remove bank accounts or budget Items
     public void addBankAccount(BankAccount bankAccount){
@@ -54,6 +66,9 @@ public class Account {
     }
 
     public void removeBankAccount(BankAccount bankAccount){
+        if(!bankAccounts.remove(bankAccount)){
+            throw new IllegalArgumentException("Bank account not found");
+        }
         bankAccounts.remove(bankAccount);
     }
 
