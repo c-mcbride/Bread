@@ -1,4 +1,9 @@
+package menus;
 import java.util.Scanner;
+
+import accounts.BankAccount;
+import utils.MoneyUtils;
+
 import java.math.BigDecimal;
 public class BankAccountMenu {
     private BankAccount bankAccount;

@@ -1,4 +1,7 @@
+package accounts;
 import java.math.BigDecimal;
+
+import utils.MoneyUtils;
 
 /**
  * Budget items are used as categories that the user is budgeting for

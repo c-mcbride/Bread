@@ -1,4 +1,9 @@
+package main;
 import java.util.Scanner;
+
+import accounts.UserAccount;
+import menus.CreateUserAccountMenu;
+import menus.UserAccountMenu;
 
 /*
  * Runs the console menu for the application. Will not be used in javafx application but used here for programming

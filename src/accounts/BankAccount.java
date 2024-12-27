@@ -1,4 +1,7 @@
+package accounts;
 import java.math.BigDecimal;
+
+import utils.MoneyUtils;
 
 /**
  * Represents a bank account with basic operations for managing balance
