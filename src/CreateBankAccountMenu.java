@@ -4,7 +4,7 @@ import java.math.BigDecimal;
  * Holds the menu for the creating an account for the first time.
  * Gathers the account holder name, and inital balance
  */
-public class CreateAccountMenu {
+public class CreateBankAccountMenu {
     private Scanner scanner = new Scanner(System.in);
 
     /*

@@ -7,13 +7,13 @@ import java.math.BigDecimal;
  * This class stores a user account, it has a name,
  * Bank Account list, variable and fixed expenses lists
  */
-public class Account {
+public class UserAccount {
     private String accountName;
     private List<BankAccount> bankAccounts;
     private List<BudgetItem> fixedExpenses; //List of fixed expenses budget items
     private List<BudgetItem> variableExpenses;
 
-    public Account(String accountName){
+    public UserAccount(String accountName){
         this.accountName = accountName;
         this.bankAccounts = new ArrayList<>(); //Empty List
         this.fixedExpenses = new ArrayList<>();
@@ -25,11 +25,20 @@ public class Account {
         return accountName;
     }
 
+    //Getters for both expenses list
+    public List<BudgetItem> getFixedExpenses(){
+        return Collections.unmodifiableList(fixedExpenses);
+    }
+
+    public List<BudgetItem> getVariableExpenses(){
+        return Collections.unmodifiableList(variableExpenses);
+    }
+
     //Returning an unmodifiable view to prevent external code from modifying this directly
     public List<BankAccount> getBankAccounts() {
         return Collections.unmodifiableList(bankAccounts);
     }
-    
+
     /**
      * Adds to the fixed expenses budget Item list
      * @param name name of the budget item
@@ -71,5 +80,4 @@ public class Account {
         }
         bankAccounts.remove(bankAccount);
     }
-
 }

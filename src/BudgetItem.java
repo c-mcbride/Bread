@@ -14,7 +14,7 @@ public class BudgetItem {
 
     public BudgetItem(String budgetItemName, BudgetType type, BigDecimal amountToSpend){
         if(budgetItemName == null || budgetItemName.trim().isEmpty()){
-            throw new IllegalArgumentException("Budget item name cannot be null or empty")
+            throw new IllegalArgumentException("Budget item name cannot be null or empty");
         }
         if(type == null){
             throw new IllegalArgumentException("Type cannot be null");

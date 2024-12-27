@@ -2,10 +2,10 @@ import java.util.Scanner;
 
 /*
  * Runs the console menu for the application. Will not be used in javafx application but used here for programming
- * purposes. 
+ * purposes.
  */
 public class BreadApp {
-    private BankAccount bankAccount;
+    private UserAccount userAccount;
     private Scanner scanner = new Scanner(System.in);
 
     public void run(){
@@ -18,10 +18,10 @@ public class BreadApp {
 
             switch(choice){
                 case 1:
-                    createAccount();
+                    createUserAccount();
                     break;
                 case 2:
-                    modifyAccount();
+                    modifyUserAccount();
                     break;
                 case 3:
                     System.out.println("Exiting Bread....Goodbye!");
@@ -36,26 +36,26 @@ public class BreadApp {
 
     //Helper function to create the menu display
     private void displayMenu(){
-        System.out.println("1. Create Account");
-        System.out.println("2. Modify Account");
+        System.out.println("1. Create User Account");
+        System.out.println("2. Access/Modify Budget");
         System.out.println("3. Exit");
         System.out.print("Enter your choice: ");
     }
 
     //Uses the createAccout menu to make a new account
-    private void createAccount(){
-        CreateAccountMenu accountMenu = new CreateAccountMenu();
-        bankAccount = accountMenu.createAccount();
+    private void createUserAccount(){
+        CreateUserAccountMenu userAccountMenu = new CreateUserAccountMenu();
+        userAccount = userAccountMenu.createUserAccount();
     }
 
     //Modify an account, if it exists
-    private void modifyAccount(){
-        if (bankAccount == null){
+    private void modifyUserAccount(){
+        if (userAccount== null){
             System.out.println("No account exists. Please create an account first");
         }
         else{
-            BankAccountMenu bankAccountMenu = new BankAccountMenu(bankAccount);
-            bankAccountMenu.showMenu();
+            UserAccountMenu userAccountMenu = new UserAccountMenu(userAccount);
+            userAccountMenu.showUserMenu();
         }
     }
 }
