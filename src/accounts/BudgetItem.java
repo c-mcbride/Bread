@@ -1,6 +1,5 @@
 package accounts;
 import java.math.BigDecimal;
-
 import utils.MoneyUtils;
 
 /**

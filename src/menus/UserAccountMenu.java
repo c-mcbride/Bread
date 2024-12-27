@@ -1,20 +1,18 @@
 package menus;
 import java.util.Scanner;
-
-import accounts.BudgetItem;
-import accounts.BudgetType;
-import accounts.UserAccount;
-
 import java.math.BigDecimal;
 
+import accounts.BudgetType;
+import accounts.UserAccount;
+import service.UserAccountService;
 
 //Here the user can create budget items
 public class UserAccountMenu {
     private Scanner scanner = new Scanner(System.in);
-    private UserAccount userAccount;
+    private UserAccountService userAccountService;
 
     public UserAccountMenu(UserAccount userAccount){
-        this.userAccount = userAccount;
+        this.userAccountService = new UserAccountService(userAccount);
     }
 
     public void showUserMenu(){
@@ -60,38 +58,22 @@ public class UserAccountMenu {
 
     /**
      * Takes the item, looks at the enum and adds it to the appropriate list based on FIXED or VARIABLE type
+     * User account service passes this to the UserAccount class
+     * UserAccoutMenu -> UserAccountService -> UserAccount
      * @param type enum budget type FIXED or VARIABLE
      */
     private void addBudgetItem(BudgetType type){
         System.out.println("Adding a  " + type + " Budget Item: ");
         String itemName = getValidItemName();
         BigDecimal amount = getValidAmount();
-
-
-        if(type == BudgetType.FIXED){
-            userAccount.addFixedBudgetItem(itemName, amount);
-        }
-        if(type == BudgetType.VARIABLE){
-            userAccount.addVariableBudgetItem(itemName, amount);
-        }
-
-        System.out.println(type + " Budget Item added succesfully");
+        userAccountService.addBudgetItem(itemName, type, amount);
     }
 
     /**
      * Prints both the variable and fixed budget sections
      */
     private void viewCompleteBudget(){
-        System.out.println("\nFixed Expenses:");
-        for (BudgetItem item : userAccount.getFixedExpenses()) {
-            System.out.printf("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend());
-        }
-
-        System.out.println("\nVariable Expenses:");
-
-        for (BudgetItem item : userAccount.getVariableExpenses()) {
-            System.out.printf("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend());
-        }
+        System.out.println(userAccountService.viewCompleteBudget());
     }
 
     /**
