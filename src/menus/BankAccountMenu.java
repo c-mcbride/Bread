@@ -1,16 +1,18 @@
 package menus;
-import java.util.Scanner;
 
-import accounts.BankAccount;
+import java.util.Scanner;
+import java.math.BigDecimal;
+
+import service.BankAccountService;
 import utils.MoneyUtils;
 
-import java.math.BigDecimal;
 public class BankAccountMenu {
-    private BankAccount bankAccount;
+    private BankAccountService bankAccountService;
     private Scanner scanner = new Scanner(System.in);
 
-    public BankAccountMenu(BankAccount bankAccount) {
-        this.bankAccount = bankAccount;
+    //Interacts with service layer only
+    public BankAccountMenu(BankAccountService bankAccountService) {
+        this.bankAccountService= bankAccountService;
     }
 
     public void showMenu() {
@@ -36,27 +38,26 @@ public class BankAccountMenu {
             try{
                 switch (choice) {
                     case 1:
-                        System.out.println("Balance: " + MoneyUtils.formatCurrency(bankAccount.getBalance()));
+                        System.out.println("Balance: " + bankAccountService.getFormattedBalance());
                         break;
                     case 2:
                         //Print confirmation here to decouple Print statements for core functions
                         System.out.print("Enter deposit amount: ");
                         if(scanner.hasNextBigDecimal()){
                             BigDecimal depositAmount = scanner.nextBigDecimal();
-                            BigDecimal deposited = bankAccount.deposit(depositAmount);
+                            BigDecimal deposited = bankAccountService.deposit(depositAmount);
                             System.out.println("Deposited: $" + MoneyUtils.formatCurrency(deposited)); //Nice formatted currency for display
                         }
                         else{
                             scanner.next();//Consume invalid input
                             throw new IllegalArgumentException("Invalid input. Please enter a numeric value.");
                         }
-
                         break;
                     case 3:
                         System.out.print("Enter withdrawal amount: ");
                         if(scanner.hasNextBigDecimal()){
                             BigDecimal withdrawalAmount = scanner.nextBigDecimal();
-                            BigDecimal withdrawn = bankAccount.withdraw(withdrawalAmount);
+                            BigDecimal withdrawn = bankAccountService.withdraw(withdrawalAmount);
                             System.out.println("Withdrew: $" + MoneyUtils.formatCurrency(withdrawn));
                         }
                         else{

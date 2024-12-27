@@ -58,7 +58,8 @@ public class UserAccountMenu {
 
     /**
      * Takes the item, looks at the enum and adds it to the appropriate list based on FIXED or VARIABLE type
-     * User account service passes this to the UserAccount class
+     * User account service passes this to the UserAccount class, we dont want the menu to interact directly with the
+     * User account class. 
      * UserAccoutMenu -> UserAccountService -> UserAccount
      * @param type enum budget type FIXED or VARIABLE
      */
