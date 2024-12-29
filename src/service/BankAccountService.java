@@ -2,7 +2,6 @@ package service;
 
 import java.math.BigDecimal;
 import accounts.BankAccount;
-import utils.MoneyUtils;
 
 public class BankAccountService {
     private BankAccount bankAccount;
@@ -11,8 +10,23 @@ public class BankAccountService {
         this.bankAccount = bankAccount;
     }
 
+    /**
+     * Factory method to create bank account, allows service layer to generate an account
+     * @param accountName name for the bankaccount
+     * @param initialDeposit the starting amount for the bankaccount
+     * @return BankAccount Object
+     */
+    public static BankAccount createNewBankAccount(String accountName, BigDecimal initialDeposit){
+        if(initialDeposit.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("Initial Deposit must be non-negative");
+        }
+
+        BankAccount newAccount = new BankAccount(accountName, initialDeposit);
+        return newAccount;
+    }
+
     public String getAccountName(){
-        return bankAccount.getAccountHolderName();
+        return bankAccount.getName();
     }
 
     public BigDecimal getBalance(){

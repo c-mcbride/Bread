@@ -3,8 +3,6 @@ import java.util.Scanner;
 
 import accounts.UserAccount;
 
-import java.math.BigDecimal;
-
 public class CreateUserAccountMenu {
     private Scanner scanner = new Scanner(System.in);
 

@@ -10,23 +10,23 @@ import utils.MoneyUtils;
  * -Handle deposits and withdrawl operations with validation
  */
 public class BankAccount {
-    private String accountHolderName;
+    private String accountName;
     private BigDecimal balance;
 
     //Bank account constructor with validation. Makes sure that the starting balance is greater than or equal to 0
-    public BankAccount(String accountHolderName, BigDecimal initialBalance) {
-        if(accountHolderName == null || accountHolderName.trim().isEmpty()){
+    public BankAccount(String accountName, BigDecimal initialBalance) {
+        if(accountName == null || accountName.trim().isEmpty()){
             throw new IllegalArgumentException("Account holder name cannot be null or empty");
         }
         if(initialBalance.compareTo(BigDecimal.ZERO) < 0){
             throw new IllegalArgumentException("Initial balance cannot be negative. ");
         }
-        this.accountHolderName = accountHolderName;
+        this.accountName = accountName;
         this.balance = MoneyUtils.round(initialBalance); //Use the MoneyUtils class
     }
 
-    public String getAccountHolderName() {
-        return accountHolderName;
+    public String getName() {
+        return accountName;
     }
 
     public BigDecimal getBalance() {

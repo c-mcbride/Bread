@@ -1,9 +1,11 @@
 package service;
 import java.math.BigDecimal;
+import java.util.List;
 
 import accounts.BudgetItem;
 import accounts.BudgetType;
 import accounts.UserAccount;
+import accounts.BankAccount;
 
 //Service Layer for User Accounts to seperate buisness logic from Inputs
 public class UserAccountService {
@@ -46,5 +48,34 @@ public class UserAccountService {
         }
 
         return budgetSummary.toString();
+    }
+
+    public void addBankAccount(BankAccount bankAccount){
+        userAccount.addBankAccount(bankAccount);
+    }
+
+    public List<BankAccount> getBankAccounts(){
+        return userAccount.getBankAccounts();
+    }
+
+    /**
+     * Method to build a string that formats the balance nicely to the console
+     * @return String showing bank account summaries
+     */
+    public String viewBankAccounts(){
+        StringBuilder bankAccountSummary = new StringBuilder();
+        List<BankAccount> bankAccounts = userAccount.getBankAccounts();
+
+        if(bankAccounts.isEmpty()){
+            bankAccountSummary.append("No bank accounts available\n");
+        }
+        else{
+            bankAccountSummary.append("\nAccounts\t\tBalance\n");
+            bankAccountSummary.append("------------------------------------\n");
+            for(BankAccount account : bankAccounts){
+                bankAccountSummary.append(String.format("%-20s $%.2f%n", account.getName(), account.getBalance()));
+            }
+        }
+        return bankAccountSummary.toString();
     }
 }

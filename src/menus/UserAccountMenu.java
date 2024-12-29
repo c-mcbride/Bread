@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import accounts.BudgetType;
 import accounts.UserAccount;
+import accounts.BankAccount;
+import service.BankAccountService;
 import service.UserAccountService;
 
 //Here the user can create budget items
@@ -20,10 +22,11 @@ public class UserAccountMenu {
 
         do {
             System.out.println("\nUser Account Menu");
-            System.out.println("1. Add Fixed Budget Item");
-            System.out.println("2. Add Variable Budget Item");
-            System.out.println("3. View Complete Budget");
-            System.out.println("4. Exit");
+            System.out.println("1. Add Bank Account");
+            System.out.println("2. Add Fixed Budget Item");
+            System.out.println("3. Add Variable Budget Item");
+            System.out.println("4. View Complete Budget");
+            System.out.println("5. Exit");
 
             if(scanner.hasNextInt()){
                 choice = scanner.nextInt();
@@ -38,12 +41,16 @@ public class UserAccountMenu {
                 switch (choice){
                     //Add fixed Budget Item
                     case 1:
-                        addBudgetItem(BudgetType.FIXED);
+                        addBankAccount();
                         break;
                     case 2:
-                        addBudgetItem(BudgetType.VARIABLE);
+                        addBudgetItem(BudgetType.FIXED);
                         break;
                     case 3:
+                        addBudgetItem(BudgetType.VARIABLE);
+                        break;
+                    case 4:
+                        viewBankAccounts();
                         viewCompleteBudget();
                         break;
                     default:
@@ -53,37 +60,31 @@ public class UserAccountMenu {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        while (choice != 4);
+        while (choice != 5);
     }
 
     /**
-     * Takes the item, looks at the enum and adds it to the appropriate list based on FIXED or VARIABLE type
-     * User account service passes this to the UserAccount class, we dont want the menu to interact directly with the
-     * User account class. 
-     * UserAccoutMenu -> UserAccountService -> UserAccount
-     * @param type enum budget type FIXED or VARIABLE
+     * Adds bank account to user account list
      */
-    private void addBudgetItem(BudgetType type){
-        System.out.println("Adding a  " + type + " Budget Item: ");
-        String itemName = getValidItemName();
-        BigDecimal amount = getValidAmount();
-        userAccountService.addBudgetItem(itemName, type, amount);
+    private void addBankAccount(){
+        System.out.println("Add Bank Account: ");
+        String bankAccountName = getValidBankAccountName();
+        BigDecimal initialDeposit = getValidStartingBalance();
+
+        try{
+            //Create the new bankaccount
+            BankAccount newBankAccount = BankAccountService.createNewBankAccount(bankAccountName, initialDeposit);
+            //BankAccountService bankAccountService = new BankAccountService(newBankAccount);
+            userAccountService.addBankAccount(newBankAccount);
+            System.out.println("Bank account created successfully.");
+        }catch(IllegalArgumentException e){
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
-    /**
-     * Prints both the variable and fixed budget sections
-     */
-    private void viewCompleteBudget(){
-        System.out.println(userAccountService.viewCompleteBudget());
-    }
-
-    /**
-     * Validates budget Item name to make sure it is not zero
-     * @return non-empty string
-     */
-    private String getValidItemName(){
+    private String getValidBankAccountName(){
         while(true){
-            System.out.println("Enter Budget item name: ");
+            System.out.println("Enter Bank Account name: ");
             String itemName = scanner.nextLine().trim();
             if(!itemName.isEmpty()){
                 return itemName;
@@ -93,10 +94,34 @@ public class UserAccountMenu {
     }
 
     /**
+     *
+     * @return initialBalance for bankAccount
+     */
+    private BigDecimal getValidStartingBalance(){
+        while(true){
+            System.out.println("Enter Starting Balance for Bank Account: ");
+            if (scanner.hasNextBigDecimal()){
+                BigDecimal initialDeposit = scanner.nextBigDecimal();
+                scanner.nextLine(); //Consume the newline character
+                if(initialDeposit.compareTo(BigDecimal.ZERO) >= 0){
+                    return initialDeposit;
+                }
+                else{
+                    System.out.println("Error: Starting Balance must be non-negative");
+                }
+            }
+            else{
+                System.out.println("Invalid input. Please enter a valid decimal value. ");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    /**
      * Validates inital amount to make sure that it is not negative
      * @return non-negative big decimal
      */
-    private BigDecimal getValidAmount(){
+    private BigDecimal getValidBudgetAmount(){
         while(true){
             System.out.println("Enter the starting amount for the budget item: ");
             if(scanner.hasNextBigDecimal()){
@@ -116,4 +141,46 @@ public class UserAccountMenu {
         }
     }
 
+     /**
+     * Validates budget Item name to make sure it is not zero
+     * @return non-empty string
+     */
+    private String getValidBudgetItemName(){
+        while(true){
+            System.out.println("Enter Budget item name: ");
+            String itemName = scanner.nextLine().trim();
+            if(!itemName.isEmpty()){
+                return itemName;
+            }
+            System.out.println("Error: Name cannot be empty. Please try again");
+        }
+    }
+
+    /**
+     * Takes the item, looks at the enum and adds it to the appropriate list based on FIXED or VARIABLE type
+     * User account service passes this to the UserAccount class, we dont want the menu to interact directly with the
+     * User account class.
+     * UserAccoutMenu -> UserAccountService -> UserAccount
+     * @param type enum budget type FIXED or VARIABLE
+     */
+    private void addBudgetItem(BudgetType type){
+        System.out.println("Adding a  " + type + " Budget Item: ");
+        String itemName = getValidBudgetItemName();
+        BigDecimal amount = getValidBudgetAmount();
+        userAccountService.addBudgetItem(itemName, type, amount);
+    }
+
+     /**
+     * Prints both the variable and fixed budget sections
+     */
+    private void viewCompleteBudget(){
+        System.out.println(userAccountService.viewCompleteBudget());
+    }
+
+    /**
+     * Prints bank account list from userAccount
+     */
+    public void viewBankAccounts(){
+        System.out.println(userAccountService.viewBankAccounts());
+    }
 }
