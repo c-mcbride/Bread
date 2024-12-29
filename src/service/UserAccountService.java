@@ -54,6 +54,17 @@ public class UserAccountService {
         userAccount.addBankAccount(bankAccount);
     }
 
+    /**
+     * Creates bankaccount for the user and updates the starting balance in one go
+     * addAmountToBeBudgeted goes from accountService -> UserAccount -> BudgetItem
+     * @param bankAccount with account name and starting balance which will be used as inflow
+     */
+    public void createBankAccountAndUpdateBudget(BankAccount bankAccount){
+        userAccount.addBankAccount(bankAccount);
+        BigDecimal startingAmountToBeBudgeted = bankAccount.getBalance();
+        userAccount.addAmountToBeBudgted(startingAmountToBeBudgeted);
+    }
+
     public List<BankAccount> getBankAccounts(){
         return userAccount.getBankAccounts();
     }
@@ -77,5 +88,14 @@ public class UserAccountService {
             }
         }
         return bankAccountSummary.toString();
+    }
+
+    /**
+     * Displays the amount to be budgeted.
+    * @return String formatted with the amount to be budgeted.
+    */
+    public String viewAmountToBeBudgeted() {
+        BigDecimal amountToBeBudgeted = userAccount.getAmountToBeBudgeted();
+        return String.format("\nAmount to Be Budgeted: $%.2f\n", amountToBeBudgeted);
     }
 }

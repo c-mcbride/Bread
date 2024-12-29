@@ -37,7 +37,7 @@ public class BudgetItem {
      */
     public BigDecimal addMoneyToCategory(BigDecimal amountToAdd){
         if(!MoneyUtils.isValidAmount(amountToAdd)){
-            throw new IllegalArgumentException("Amount to add must be greater than zero")
+            throw new IllegalArgumentException("Amount to add must be greater than zero");
         }
         amountToSpend = amountToSpend.add(amountToAdd);
         return amountToSpend;

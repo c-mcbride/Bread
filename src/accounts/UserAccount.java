@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.math.BigDecimal;
+import accounts.BudgetItem;
 
 /**
  * This class stores a user account, it has a name,
@@ -13,12 +14,14 @@ public class UserAccount {
     private List<BankAccount> bankAccounts;
     private List<BudgetItem> fixedExpenses; //List of fixed expenses budget items
     private List<BudgetItem> variableExpenses;
+    private BudgetItem toBeBudgted; //Holds money that needs to be delegated to budget items
 
     public UserAccount(String accountName){
         this.accountName = accountName;
         this.bankAccounts = new ArrayList<>(); //Empty List
         this.fixedExpenses = new ArrayList<>();
         this.variableExpenses = new ArrayList<>();
+        this.toBeBudgted = new BudgetItem("Inflow", BudgetType.TOBEBUDGTED, BigDecimal.ZERO);
     }
 
     //Getters
@@ -80,5 +83,21 @@ public class UserAccount {
             throw new IllegalArgumentException("Bank account not found");
         }
         bankAccounts.remove(bankAccount);
+    }
+
+    /**
+     * Used to modify the toBeBudget object variable
+     * @param toBeBudgted the amount to add to the toBeBudgeted category
+     */
+    public void addAmountToBeBudgted(BigDecimal toBeBudgted){
+        this.toBeBudgted.addMoneyToCategory(toBeBudgted);
+    }
+
+    /**
+     * Goes to the amount to be budgeted budget item and gets the amount left to spend
+     * @return amount to spend in the to be budgeted category
+     */
+    public BigDecimal getAmountToBeBudgeted(){
+        return this.toBeBudgted.getAmountToSpend();
     }
 }

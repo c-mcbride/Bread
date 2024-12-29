@@ -51,6 +51,7 @@ public class UserAccountMenu {
                         break;
                     case 4:
                         viewBankAccounts();
+                        viewAmountToBeBudgeted();
                         viewCompleteBudget();
                         break;
                     default:
@@ -75,7 +76,7 @@ public class UserAccountMenu {
             //Create the new bankaccount
             BankAccount newBankAccount = BankAccountService.createNewBankAccount(bankAccountName, initialDeposit);
             //BankAccountService bankAccountService = new BankAccountService(newBankAccount);
-            userAccountService.addBankAccount(newBankAccount);
+            userAccountService.createBankAccountAndUpdateBudget(newBankAccount);
             System.out.println("Bank account created successfully.");
         }catch(IllegalArgumentException e){
             System.out.println("Error: " + e.getMessage());
@@ -182,5 +183,9 @@ public class UserAccountMenu {
      */
     public void viewBankAccounts(){
         System.out.println(userAccountService.viewBankAccounts());
+    }
+
+    public void viewAmountToBeBudgeted(){
+        System.out.println(userAccountService.viewAmountToBeBudgeted());
     }
 }
