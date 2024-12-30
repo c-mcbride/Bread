@@ -50,10 +50,10 @@ public class UserAccountMenu {
                         addBudgetItem(BudgetType.VARIABLE);
                         break;
                     case 4:
-                        viewBankAccounts();
-                        viewAmountToBeBudgeted();
                         viewCompleteBudget();
                         break;
+                    case 5:
+                        System.out.println("Exiting account menu.....");
                     default:
                         System.out.println("Invalid choice. Please select a valid option");
                 }

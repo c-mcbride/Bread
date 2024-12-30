@@ -16,7 +16,7 @@ public class UserAccountService {
     }
 
     /**
-     *
+     * Creates budget item object and adds it to user list
      * @param budgetItemName Name of the budget item
      * @param type ENUM type: Fixed or Variable
      * @param amountToSpend Inital amount availble for budget item
@@ -34,7 +34,7 @@ public class UserAccountService {
      * Takes Fixed and Variable expenses from Account class and formats them for console print
      * @return budgetString formated for viewing
      */
-    public String viewCompleteBudget(){
+    public String viewBankAccountAndBudget(){
         StringBuilder budgetSummary = new StringBuilder();
 
         budgetSummary.append("\nFixed Expenses: \n");
@@ -97,5 +97,43 @@ public class UserAccountService {
     public String viewAmountToBeBudgeted() {
         BigDecimal amountToBeBudgeted = userAccount.getAmountToBeBudgeted();
         return String.format("\nAmount to Be Budgeted: $%.2f\n", amountToBeBudgeted);
+    }
+
+    /**
+     * Displays the complete budget, including bank accounts, fixed/variable expenses, and tobebudgeted
+     * and the amount to be budgeted.
+     * @return budgetString formatted for viewing.
+     */
+    public String viewCompleteBudget() {
+        StringBuilder budgetSummary = new StringBuilder();
+
+        // Add bank accounts section
+        budgetSummary.append("\nBank Accounts:\n");
+        budgetSummary.append(String.format("%-20s %-20s%n", "Account Name", "Balance"));
+        budgetSummary.append("-------------------------------------------------\n");
+        for (BankAccount account : userAccount.getBankAccounts()) {
+            budgetSummary.append(String.format("%-20s $%.2f%n", account.getName(), account.getBalance()));
+        }
+
+        // Add amount to be budgeted
+        budgetSummary.append(viewAmountToBeBudgeted());
+
+        // Add fixed expenses section
+        budgetSummary.append("\nFixed Expenses:\n");
+        budgetSummary.append(String.format("%-20s %-20s%n", "Item Name", "Amount"));
+        budgetSummary.append("-------------------------------------------------\n");
+        for (BudgetItem item : userAccount.getFixedExpenses()) {
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+        }
+
+        // Add variable expenses section
+        budgetSummary.append("\nVariable Expenses:\n");
+        budgetSummary.append(String.format("%-20s %-20s%n", "Item Name", "Amount"));
+        budgetSummary.append("-------------------------------------------------\n");
+        for (BudgetItem item : userAccount.getVariableExpenses()) {
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+        }
+
+        return budgetSummary.toString();
     }
 }
