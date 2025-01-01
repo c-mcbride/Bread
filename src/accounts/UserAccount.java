@@ -1,9 +1,11 @@
 package accounts;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.math.BigDecimal;
-import accounts.BudgetItem;
+import java.util.Set;
 
 /**
  * This class stores a user account, it has a name,
@@ -15,13 +17,16 @@ public class UserAccount {
     private List<BudgetItem> fixedExpenses; //List of fixed expenses budget items
     private List<BudgetItem> variableExpenses;
     private BudgetItem toBeBudgted; //Holds money that needs to be delegated to budget items
+    private Set<String> categories; //Dynamic category list, will be used later for transaction choices
 
     public UserAccount(String accountName){
         this.accountName = accountName;
         this.bankAccounts = new ArrayList<>(); //Empty List
         this.fixedExpenses = new ArrayList<>();
         this.variableExpenses = new ArrayList<>();
-        this.toBeBudgted = new BudgetItem("Inflow", BudgetType.TOBEBUDGTED, BigDecimal.ZERO);
+        this.categories = new HashSet<>();
+        //When object is constructed, we created a To Be Budgeted item, of ENUM:TOBEBUDGTED, with zero dollars
+        this.toBeBudgted = new BudgetItem("To Be Budgeted", BudgetType.TOBEBUDGTED, BigDecimal.ZERO);
     }
 
     //Getters
@@ -49,13 +54,9 @@ public class UserAccount {
      * @param amount amount of money to add to the item on creation
      */
     public void addFixedBudgetItem(String name, BigDecimal amount){
-        if(name == null || name.isBlank()){
-            throw new IllegalArgumentException("Budget item name cannot be null or blank");
-        }
-        if(amount == null || amount.compareTo(BigDecimal.ZERO) < 0){
-            throw new IllegalArgumentException("Amount must be a non-negative value");
-        }
+        validateBudgetItem(name, amount);
         fixedExpenses.add(new BudgetItem(name, BudgetType.FIXED, amount));
+        addCategoryToSet(name);
     }
 
     /**
@@ -64,13 +65,9 @@ public class UserAccount {
      * @param amount amount of money to add once the item is created
      */
     public void addVariableBudgetItem(String name, BigDecimal amount){
-        if(name == null || name.isBlank()){
-            throw new IllegalArgumentException("Budget item name cannot be null or blank");
-        }
-        if(amount == null || amount.compareTo(BigDecimal.ZERO) < 0){
-            throw new IllegalArgumentException("Amount must be a non-negative value");
-        }
+        validateBudgetItem(name, amount);
         variableExpenses.add(new BudgetItem(name, BudgetType. VARIABLE, amount));
+        addCategoryToSet(name);
     }
 
     //Methods to add/remove bank accounts or budget Items
@@ -99,5 +96,39 @@ public class UserAccount {
      */
     public BigDecimal getAmountToBeBudgeted(){
         return this.toBeBudgted.getAmountToSpend();
+    }
+
+    /**
+     * Add a new category, will be added when a new budget Item is created
+     * @param category these will be used for transactions later to pull money from
+     */
+    public void addCategoryToSet(String category){
+        categories.add(category);
+    }
+
+    /**
+     * Checks to see if the category exists in the category set
+     * @param category this is what we are looking for
+     * @return boolean shows if the item is in the set or not
+     */
+    public boolean isValidCategory(String category){
+        return categories.contains(category);
+    }
+
+    /**
+     * Used to get the full list of budget categories
+     * @return set of categories associated with the user account
+     */
+    public Set<String> getCategories(){
+        return Collections.unmodifiableSet(categories);
+    }
+
+    private void validateBudgetItem(String name, BigDecimal amount){
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Budget item name cannot be null or blank");
+        }
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount must be a non-negative value");
+        }
     }
 }
