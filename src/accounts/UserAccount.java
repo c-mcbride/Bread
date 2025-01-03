@@ -117,6 +117,35 @@ public class UserAccount {
     }
 
     /**
+     * Validates if a BankAccount with the given name exists in UserAccount
+     * @param name name of the bank account to check for
+     * @return boolean of it the account exists or not
+     */
+    public boolean hasBankAccount(String name){
+        for(BankAccount account : bankAccounts){
+            if(account.getName().equalsIgnoreCase(name)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks to see if there is an account with the given name in the list, if not returns null..if so return that account
+     * @param name entered name for the bank account
+     * @return the bankaccount with the given name if it exists
+     */
+    public BankAccount getBankAccountByName(String name){
+        for(BankAccount account : bankAccounts){
+            if(account.getName().equalsIgnoreCase(name)){
+                return account;
+            }
+        }
+
+        return null;
+    }
+    /**
      * Used to get the full list of budget categories
      * @return set of categories associated with the user account
      */

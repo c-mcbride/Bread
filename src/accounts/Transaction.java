@@ -43,7 +43,7 @@ public class Transaction {
         this.bankAccount = bankAccount;
         this.payee = payee;
         this.category = category;
-        this.memo = memo;
+        this.memo = (memo == null) ? "" : memo; //Memo optional, if it is null the string is "" else the memo is what is entered 
         this.inflow = inflow == null ? BigDecimal.ZERO : inflow; //If inflow parameter is null, this.inflow = 0 else this.inflow = inflow
         this.outflow = outflow == null ? BigDecimal.ZERO : outflow; //If outflow is null, this.outflow = 0 else this.outflow = outflow
     }

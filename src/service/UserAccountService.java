@@ -1,6 +1,7 @@
 package service;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import accounts.BudgetItem;
 import accounts.BudgetType;
@@ -136,4 +137,65 @@ public class UserAccountService {
 
         return budgetSummary.toString();
     }
+
+    public Set<String> getValidCategories(){
+        return userAccount.getCategories();
+    }
+
+    public boolean isValidBankAccount(String accountName){
+        return userAccount.hasBankAccount(accountName);
+    }
+
+    public boolean isValidCategory(String category){
+        return userAccount.isValidCategory(category);
+    }
+
+    public BankAccount getBankAccountByName(String accountName){
+        for(BankAccount account : userAccount.getBankAccounts()){
+            if(account.getName().equalsIgnoreCase(accountName)){
+                return account;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method to build a string that formats the balance nicely to the console
+     * @return String showing bank account summaries
+     */
+    public String viewBankAccountsString() {
+        StringBuilder bankAccountSummary = new StringBuilder();
+        List<BankAccount> bankAccounts = userAccount.getBankAccounts();
+
+        if (bankAccounts.isEmpty()) {
+            bankAccountSummary.append("No bank accounts available\n");
+        } else {
+            bankAccountSummary.append("\nAccounts\t\tBalance\n");
+            bankAccountSummary.append("------------------------------------\n");
+            for (BankAccount account : bankAccounts) {
+                bankAccountSummary.append(String.format("%-20s $%.2f%n", account.getName(), account.getBalance()));
+            }
+        }
+        return bankAccountSummary.toString();
+    }
+
+    /**
+    * Formats and prints the valid categories associated with the user account.
+    */
+    public void printCategories() {
+        Set<String> categories = userAccount.getCategories();
+
+        if (categories == null || categories.isEmpty()) {
+            System.out.println("No categories available.");
+            return;
+        }
+
+        System.out.println("\nCategories:");
+        System.out.println("--------------------------------");
+        for (String category : categories) {
+            System.out.println("- " + category);
+        }
+        System.out.println("--------------------------------");
+    }
+
 }

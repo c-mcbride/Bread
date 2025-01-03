@@ -3,15 +3,22 @@ import java.util.Scanner;
 import java.math.BigDecimal;
 
 import accounts.BudgetType;
+import accounts.Transaction;
 import accounts.UserAccount;
 import accounts.BankAccount;
 import service.BankAccountService;
 import service.UserAccountService;
+import utils.DateUtils;
+import utils.MoneyUtils;
+import service.TransactionService;
+import java.time.LocalDate;
 
 //Here the user can create budget items
 public class UserAccountMenu {
     private Scanner scanner = new Scanner(System.in);
+    private UserAccount userAccount;
     private UserAccountService userAccountService;
+    private TransactionService transactionService;
 
     public UserAccountMenu(UserAccount userAccount){
         this.userAccountService = new UserAccountService(userAccount);
@@ -26,7 +33,8 @@ public class UserAccountMenu {
             System.out.println("2. Add Fixed Budget Item");
             System.out.println("3. Add Variable Budget Item");
             System.out.println("4. View Complete Budget");
-            System.out.println("5. Exit");
+            System.out.println("5. Add Transaction");
+            System.out.println("6. Exit");
 
             if(scanner.hasNextInt()){
                 choice = scanner.nextInt();
@@ -53,7 +61,11 @@ public class UserAccountMenu {
                         viewCompleteBudget();
                         break;
                     case 5:
+                        addTransaction();
+                        break;
+                    case 6:
                         System.out.println("Exiting account menu.....");
+                        break;
                     default:
                         System.out.println("Invalid choice. Please select a valid option");
                 }
@@ -61,7 +73,139 @@ public class UserAccountMenu {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        while (choice != 5);
+        while (choice != 6);
+    }
+
+    private void addTransaction(){
+        BigDecimal inflow = null;
+        BigDecimal outflow = null;
+
+        System.out.println("Enter transaction details: ");
+
+        //Get date
+        LocalDate date = getTransactionDate();
+
+        //Collecting bank account
+        BankAccount bankAccount = selectBankAccount();
+
+        //Collecting payee
+        String payee = getValidPayee();
+
+        //Collecting category
+        String category = getValidCategoryName();
+
+        //Collecting memo
+        String memo = getValidMemo();
+
+        String transactionType = getTransactionType();
+        BigDecimal transactionAmount = getTransactionAmount();
+
+        if(transactionType == "inflow"){
+            inflow = transactionAmount;
+        }
+        else{
+            outflow = transactionAmount;
+        }
+
+        //Create the transaction
+        try{
+            transactionService.createTransaction(transactionType, bankAccount, payee, category, memo, inflow, outflow);
+            System.out.println("Transaction added succesfully.");
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Error: ");
+        }
+    }
+
+    private BigDecimal getTransactionAmount(){
+        while(true){
+            System.out.println("Transaction amount: ");
+
+            if(scanner.hasNextBigDecimal()){
+                BigDecimal transactionAmount = scanner.nextBigDecimal();
+                scanner.nextLine();
+
+                if(MoneyUtils.isValidAmount(transactionAmount)){
+                    return MoneyUtils.round(transactionAmount);
+                }
+                else{
+                    System.out.println("Amount must be a non-negative value");
+                }
+            }
+            else{
+                System.out.println("Invalid input. Please enter a valid decimal value. ");
+                scanner.nextLine()
+            }
+        }
+    }
+
+    private String getTransactionType(){
+        while(true){
+            System.out.println("Is this an inflow or outflow? (Enter 'inflow' or 'outflow')");
+            String type = scanner.nextLine().trim().toLowerCase();
+
+            if(type.equals("inflow") || type.equals("outflow")){
+                return type;
+            }
+            else{
+                System.out.println("Invalid input. Please enter 'inflow' or 'outflow'.");
+            }
+        }
+    }
+
+    private LocalDate getTransactionDate(){
+        System.out.println("Enter the date of the transaction(MM-dd-yyyy): ");
+        String dateStr = scanner.nextLine().trim();
+        return DateUtils.getDateOrDefault(dateStr);
+    }
+
+    private String getValidCategoryName(){
+        while(true){
+            userAccountService.printCategories();
+            System.out.println("Enter BudgetCategory: ");
+            String category = scanner.nextLine().trim();
+
+            if(userAccountService.isValidCategory(category)){
+                return category;
+            }
+            else{
+                System.out.println("Invalid category. Please try again.")
+            }
+        }
+    }
+
+
+    public String getValidMemo() {
+        System.out.print("Enter a memo for the transaction (or press Enter to leave blank): ");
+        String memo = scanner.nextLine();
+
+        // Trim whitespace and check if the string is empty
+        if (memo == null || memo.trim().isEmpty()) {
+            return null; // Default to null if no memo is provided
+        }
+
+        return memo.trim(); // Return the cleaned-up memo
+    }
+
+    private String getValidPayee(){
+        System.out.println("Enter the payee(person/buisness): ");
+        return scanner.nextLine().trim();
+    }
+
+    private BankAccount selectBankAccount(){
+        while(true){
+            //Display bank accounts
+            userAccountService.viewBankAccountsString();
+            System.out.println("Enter the bank account name: ");
+            String accountName = scanner.nextLine().trim();
+
+            if(userAccountService.isValidBankAccount(accountName)){
+                return userAccountService.getBankAccountByName(accountName);
+            }
+            else{
+                System.out.println("Invalid bank account name. Please enter a valid bank account name. ");
+            }
+        }
     }
 
     /**
@@ -188,4 +332,5 @@ public class UserAccountMenu {
     public void viewAmountToBeBudgeted(){
         System.out.println(userAccountService.viewAmountToBeBudgeted());
     }
+
 }
