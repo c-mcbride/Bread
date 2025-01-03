@@ -1,5 +1,7 @@
 package accounts;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import utils.MoneyUtils;
 
@@ -12,6 +14,7 @@ import utils.MoneyUtils;
 public class BankAccount {
     private String accountName;
     private BigDecimal balance;
+    private List<Transaction> transactions;
 
     //Bank account constructor with validation. Makes sure that the starting balance is greater than or equal to 0
     public BankAccount(String accountName, BigDecimal initialBalance) {
@@ -23,6 +26,7 @@ public class BankAccount {
         }
         this.accountName = accountName;
         this.balance = MoneyUtils.round(initialBalance); //Use the MoneyUtils class
+        this.transactions = new ArrayList<>();
     }
 
     public String getName() {
@@ -66,5 +70,9 @@ public class BankAccount {
         }
         balance = balance.subtract(MoneyUtils.round(amount));
         return MoneyUtils.round(amount);
+    }
+
+    public void addTransaction(Transaction transaction){
+        transactions.add(transaction);
     }
 }

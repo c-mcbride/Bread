@@ -19,6 +19,7 @@ public class UserAccount {
     private BudgetItem toBeBudgted; //Holds money that needs to be delegated to budget items
     private Set<String> categories; //Dynamic category list, will be used later for transaction choices
 
+
     public UserAccount(String accountName){
         this.accountName = accountName;
         this.bankAccounts = new ArrayList<>(); //Empty List
