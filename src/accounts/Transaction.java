@@ -85,13 +85,4 @@ public class Transaction {
     public boolean isOutflow() {
         return outflow.compareTo(BigDecimal.ZERO) > 0;
     }
-
-    //This will be moved to the service layer later
-    @Override
-    public String toString() {
-        return String.format("Date: %s, Account: %s, Payee: %s, Category: %s, Memo: %s, Inflow: %s, Outflow: %s",
-                date, bankAccount.getName(), payee, category, memo,
-                inflow.compareTo(BigDecimal.ZERO) > 0 ? inflow.toString() : "",
-                outflow.compareTo(BigDecimal.ZERO) > 0 ? outflow.toString() : "");
-    }
 }

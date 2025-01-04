@@ -41,29 +41,14 @@ public class BankAccountMenu {
                         System.out.println("Balance: " + bankAccountService.getFormattedBalance());
                         break;
                     case 2:
-                        //Print confirmation here to decouple Print statements for core functions
-                        System.out.print("Enter deposit amount: ");
-                        if(scanner.hasNextBigDecimal()){
-                            BigDecimal depositAmount = scanner.nextBigDecimal();
-                            BigDecimal deposited = bankAccountService.deposit(depositAmount);
-                            System.out.println("Deposited: $" + MoneyUtils.formatCurrency(deposited)); //Nice formatted currency for display
-                        }
-                        else{
-                            scanner.next();//Consume invalid input
-                            throw new IllegalArgumentException("Invalid input. Please enter a numeric value.");
-                        }
+                        BigDecimal depositAmount = getValidBigDecimalInput("Enter deposit amount: ");
+                        BigDecimal deposited = bankAccountService.deposit(depositAmount);
+                        System.out.println("Deposited: $" + MoneyUtils.formatCurrency(deposited));
                         break;
                     case 3:
-                        System.out.print("Enter withdrawal amount: ");
-                        if(scanner.hasNextBigDecimal()){
-                            BigDecimal withdrawalAmount = scanner.nextBigDecimal();
-                            BigDecimal withdrawn = bankAccountService.withdraw(withdrawalAmount);
-                            System.out.println("Withdrew: $" + MoneyUtils.formatCurrency(withdrawn));
-                        }
-                        else{
-                            scanner.next(); //Consume invalid input
-                            throw new IllegalArgumentException("Invalid input. Please enter a numeric value. ");
-                        }
+                        BigDecimal withdrawalAmount = getValidBigDecimalInput("Enter withdrawal amount: ");
+                        BigDecimal withdrawn = bankAccountService.withdraw(withdrawalAmount);
+                        System.out.println("Withdrew: $" + MoneyUtils.formatCurrency(withdrawn));
                         break;
                     case 4:
                         System.out.println("Exiting Account Menu...");
@@ -76,5 +61,25 @@ public class BankAccountMenu {
                 System.out.println("Error: " + e.getMessage());
             }
         } while (choice != 4);
+    }
+
+    /**
+     * Validating logic was origanlly repeated in the menu, here we create a reusable method to make sure amount is bigdecimal
+     * @param prompt the string prompt that will display when this method is called
+     * @return value Validated bigdecimal for use in the deposit or withdrawl
+     */
+    private BigDecimal getValidBigDecimalInput(String prompt){
+        while(true){
+            System.out.print(prompt);
+            if(scanner.hasNextBigDecimal()){
+                BigDecimal value = scanner.nextBigDecimal();
+                scanner.nextLine();
+                return value;
+            }
+            else{
+                System.out.println("Invalid input. Please enter a valid decimal value. ");
+                scanner.nextLine();
+            }
+        }
     }
 }

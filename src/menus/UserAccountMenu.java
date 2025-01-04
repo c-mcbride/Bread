@@ -18,7 +18,6 @@ public class UserAccountMenu {
     private Scanner scanner = new Scanner(System.in);
     private UserAccountService userAccountService;
     private TransactionService transactionService;
-    private BankAccountService bankAccountService;
 
     public UserAccountMenu(UserAccount userAccount){
         this.userAccountService = new UserAccountService(userAccount);
@@ -49,7 +48,6 @@ public class UserAccountMenu {
 
             try{
                 switch (choice){
-                    //Add fixed Budget Item
                     case 1:
                         addBankAccount();
                         break;
@@ -409,5 +407,4 @@ public class UserAccountMenu {
     public void viewAmountToBeBudgeted(){
         System.out.println(userAccountService.viewAmountToBeBudgeted());
     }
-
 }
