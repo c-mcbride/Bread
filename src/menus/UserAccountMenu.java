@@ -3,20 +3,16 @@ import java.util.Scanner;
 import java.math.BigDecimal;
 
 import accounts.BudgetType;
-import accounts.Transaction;
 import accounts.UserAccount;
 import accounts.BankAccount;
 import service.BankAccountService;
 import service.UserAccountService;
-import utils.DateUtils;
 import utils.MoneyUtils;
 import service.TransactionService;
-import java.time.LocalDate;
 
 //Here the user can create budget items
 public class UserAccountMenu {
     private Scanner scanner = new Scanner(System.in);
-    private UserAccount userAccount;
     private UserAccountService userAccountService;
     private TransactionService transactionService;
 
@@ -83,7 +79,7 @@ public class UserAccountMenu {
         System.out.println("Enter transaction details: ");
 
         //Get date
-        LocalDate date = getTransactionDate();
+        String date = getTransactionDate();
 
         //Collecting bank account
         BankAccount bankAccount = selectBankAccount();
@@ -109,7 +105,7 @@ public class UserAccountMenu {
 
         //Create the transaction
         try{
-            transactionService.createTransaction(transactionType, bankAccount, payee, category, memo, inflow, outflow);
+            transactionService.createTransaction(date, bankAccount, payee, category, memo, inflow, outflow);
             System.out.println("Transaction added succesfully.");
         }
         catch(IllegalArgumentException e){
@@ -117,6 +113,10 @@ public class UserAccountMenu {
         }
     }
 
+    /**
+     * Gets a transaction in console and insures that it is a positive amount before renturned it as a dollar value
+     * @return rounded transaction amount if it is valid
+     */
     private BigDecimal getTransactionAmount(){
         while(true){
             System.out.println("Transaction amount: ");
@@ -134,11 +134,14 @@ public class UserAccountMenu {
             }
             else{
                 System.out.println("Invalid input. Please enter a valid decimal value. ");
-                scanner.nextLine()
+                scanner.nextLine();
             }
         }
     }
 
+    /*
+     * Makes sure that user input is either input or output
+     */
     private String getTransactionType(){
         while(true){
             System.out.println("Is this an inflow or outflow? (Enter 'inflow' or 'outflow')");
@@ -153,12 +156,19 @@ public class UserAccountMenu {
         }
     }
 
-    private LocalDate getTransactionDate(){
+    /*
+     * Gets date string, it will be parsed by dateutils in Transaction service
+     */
+    private String getTransactionDate(){
         System.out.println("Enter the date of the transaction(MM-dd-yyyy): ");
         String dateStr = scanner.nextLine().trim();
-        return DateUtils.getDateOrDefault(dateStr);
+        return dateStr;
     }
 
+    /**
+     * Makes sure that the category is on the list, because money will be taken from it
+     * @return category that is one of the categories on the UserAccount list
+     */
     private String getValidCategoryName(){
         while(true){
             userAccountService.printCategories();
@@ -169,12 +179,16 @@ public class UserAccountMenu {
                 return category;
             }
             else{
-                System.out.println("Invalid category. Please try again.")
+                System.out.println("Invalid category. Please try again.");
             }
         }
     }
 
 
+    /**
+     * User can enter a memo or leave it null. transaction constructor will except either one
+     * @return memo string if there is one, null otherwise
+     */
     public String getValidMemo() {
         System.out.print("Enter a memo for the transaction (or press Enter to leave blank): ");
         String memo = scanner.nextLine();
@@ -192,10 +206,14 @@ public class UserAccountMenu {
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Search for a bankaccount from the list by name
+     * @return BankAccount of the given name
+     */
     private BankAccount selectBankAccount(){
         while(true){
             //Display bank accounts
-            userAccountService.viewBankAccountsString();
+            System.out.println(userAccountService.viewBankAccountsString());
             System.out.println("Enter the bank account name: ");
             String accountName = scanner.nextLine().trim();
 
@@ -227,6 +245,10 @@ public class UserAccountMenu {
         }
     }
 
+    /**
+     * Makes sure that bankAccount name is not empty
+     * @return validated bankaccount name (i.e. not empty)
+     */
     private String getValidBankAccountName(){
         while(true){
             System.out.println("Enter Bank Account name: ");
@@ -239,7 +261,7 @@ public class UserAccountMenu {
     }
 
     /**
-     *
+     * Makes sures that bankAccount starting balance is not less than zero
      * @return initialBalance for bankAccount
      */
     private BigDecimal getValidStartingBalance(){
@@ -329,6 +351,9 @@ public class UserAccountMenu {
         System.out.println(userAccountService.viewBankAccounts());
     }
 
+    /*
+     * Views toBeBudgeted Category
+     */
     public void viewAmountToBeBudgeted(){
         System.out.println(userAccountService.viewAmountToBeBudgeted());
     }

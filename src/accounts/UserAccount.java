@@ -46,7 +46,7 @@ public class UserAccount {
 
     //Returning an unmodifiable view to prevent external code from modifying this directly
     public List<BankAccount> getBankAccounts() {
-        return Collections.unmodifiableList(bankAccounts);
+        return bankAccounts;
     }
 
     /**
@@ -76,6 +76,10 @@ public class UserAccount {
         bankAccounts.add(bankAccount);
     }
 
+    /**
+     * Looks for bankaccount to remove 
+     * @param bankAccount bankAccount to remove
+     */
     public void removeBankAccount(BankAccount bankAccount){
         if(!bankAccounts.remove(bankAccount)){
             throw new IllegalArgumentException("Bank account not found");
