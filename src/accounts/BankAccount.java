@@ -71,8 +71,12 @@ public class BankAccount {
         balance = balance.subtract(MoneyUtils.round(amount));
         return MoneyUtils.round(amount);
     }
-    
+
     public void addTransaction(Transaction transaction){
         transactions.add(transaction);
+    }
+
+    public List<Transaction> getTransactions(){
+        return this.transactions;
     }
 }

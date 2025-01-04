@@ -1,23 +1,28 @@
 package menus;
 import java.util.Scanner;
 import java.math.BigDecimal;
+import java.util.List;
 
 import accounts.BudgetType;
 import accounts.UserAccount;
 import accounts.BankAccount;
 import service.BankAccountService;
 import service.UserAccountService;
+import utils.DateUtils;
 import utils.MoneyUtils;
 import service.TransactionService;
+import accounts.Transaction;
 
 //Here the user can create budget items
 public class UserAccountMenu {
     private Scanner scanner = new Scanner(System.in);
     private UserAccountService userAccountService;
     private TransactionService transactionService;
+    private BankAccountService bankAccountService;
 
     public UserAccountMenu(UserAccount userAccount){
         this.userAccountService = new UserAccountService(userAccount);
+        this.transactionService = new TransactionService(userAccount);
     }
 
     public void showUserMenu(){
@@ -30,7 +35,8 @@ public class UserAccountMenu {
             System.out.println("3. Add Variable Budget Item");
             System.out.println("4. View Complete Budget");
             System.out.println("5. Add Transaction");
-            System.out.println("6. Exit");
+            System.out.println("6. View Transactions for BankAccount");
+            System.out.println("7. Exit");
 
             if(scanner.hasNextInt()){
                 choice = scanner.nextInt();
@@ -60,7 +66,10 @@ public class UserAccountMenu {
                         addTransaction();
                         break;
                     case 6:
-                        System.out.println("Exiting account menu.....");
+                        displayTransactionList();
+                        break;
+                    case 7:
+                        System.out.println("Exiting Account Menu");
                         break;
                     default:
                         System.out.println("Invalid choice. Please select a valid option");
@@ -69,7 +78,7 @@ public class UserAccountMenu {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        while (choice != 6);
+        while (choice != 7);
     }
 
     private void addTransaction(){
@@ -94,14 +103,22 @@ public class UserAccountMenu {
         String memo = getValidMemo();
 
         String transactionType = getTransactionType();
-        BigDecimal transactionAmount = getTransactionAmount();
 
-        if(transactionType == "inflow"){
+        if("inflow".equals(transactionType)){
+            BigDecimal transactionAmount = getTransactionAmount();
             inflow = transactionAmount;
         }
-        else{
+        else if ("outflow".equals(transactionType)){
+            BigDecimal transactionAmount = getTransactionAmount();
             outflow = transactionAmount;
         }
+        else{
+            System.out.println("Invalid transaction type. Must be 'inflow' or 'outflow'");
+            return;
+        }
+
+        System.out.println("Outflow: " + outflow);
+        System.out.println("Inflow: " + inflow);
 
         //Create the transaction
         try{
@@ -109,7 +126,7 @@ public class UserAccountMenu {
             System.out.println("Transaction added succesfully.");
         }
         catch(IllegalArgumentException e){
-            System.out.println("Error: ");
+            System.out.println("Error: " + e);
         }
     }
 
@@ -223,6 +240,41 @@ public class UserAccountMenu {
             else{
                 System.out.println("Invalid bank account name. Please enter a valid bank account name. ");
             }
+        }
+    }
+
+    public void displayTransactionList(){
+        BankAccount bankAccountToDisplay = selectBankAccount();
+
+        //Use the bankAccount service of the account to utilize service layer
+        BankAccountService bankAccountService = new BankAccountService(bankAccountToDisplay);
+        List<Transaction> transactions = bankAccountService.getTransactions();
+
+        if(transactions.isEmpty()){
+            System.out.println("No transactions available for this account. ");
+            return;
+        }
+
+        // Print header
+        System.out.printf("%-12s %-10s %-10s %-12s %-10s %-10s %-10s%n",
+                "Date", "Account", "Payee", "Category", "Memo", "Outflow", "Inflow");
+
+        // Print a line separator
+        System.out.println("--------------------------------------------------------------");
+
+        // Loop through and display each transaction
+        for (Transaction transaction : transactions) {
+            String formattedDate = DateUtils.formatDate(transaction.getDate());
+            String accountName = bankAccountService.getAccountName();
+            String payee = transaction.getPayee();
+            String category = transaction.getCategory();
+            String memo = transaction.getMemo() != null ? transaction.getMemo() : "";
+            BigDecimal outflow = transaction.getOutflow();
+            BigDecimal inflow = transaction.getInflow();
+
+            // Format and print each transaction
+            System.out.printf("%-12s %-10s %-10s %-12s %-10s %-10.2f %-10.2f%n",
+                    formattedDate, accountName, payee, category, memo, outflow, inflow);
         }
     }
 

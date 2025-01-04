@@ -1,7 +1,10 @@
 package service;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 import accounts.BankAccount;
+import accounts.Transaction;
 
 public class BankAccountService {
     private BankAccount bankAccount;
@@ -55,5 +58,9 @@ public class BankAccountService {
      */
     public BigDecimal withdraw(BigDecimal amount){
         return bankAccount.withdraw(amount);
+    }
+
+    public List<Transaction> getTransactions(){
+        return bankAccount.getTransactions();
     }
 }
