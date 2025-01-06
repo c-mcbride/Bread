@@ -4,11 +4,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
+
 public class Transaction {
     private LocalDate date;
     private BankAccount bankAccount;
-    private String payee; //The entity getting paid or paying
-    private String category;//Should coincide with a category chosen in the menu
+    private BudgetItem budgetItem;
+    private String payee;
     private String memo; //Optional details for the transaction
     private BigDecimal inflow;
     private BigDecimal outflow;
@@ -24,7 +25,7 @@ public class Transaction {
      * @param inflow Money coming in
      * @param Outflow money going out
      */
-    public Transaction(LocalDate date, BankAccount bankAccount, String payee, String category, String memo, BigDecimal inflow, BigDecimal outflow){
+    public Transaction(LocalDate date, BankAccount bankAccount, String payee, BudgetItem budgetItem, String memo, BigDecimal inflow, BigDecimal outflow){
         //Transaction cannot be both inflow and outflow, has to be one or the other
         if(inflow != null && outflow != null && inflow.compareTo(BigDecimal.ZERO) > 0 && outflow.compareTo(BigDecimal.ZERO) > 0){
             throw new IllegalArgumentException("A transaction cannot have both inflow and outflow values.");
@@ -42,7 +43,7 @@ public class Transaction {
         this.date = date;
         this.bankAccount = bankAccount;
         this.payee = payee;
-        this.category = category;
+        this.budgetItem = budgetItem;
         this.memo = (memo == null) ? "" : memo; //Memo optional, if it is null the string is "" else the memo is what is entered
         this.inflow = inflow == null ? BigDecimal.ZERO : inflow; //If inflow parameter is null, this.inflow = 0 else this.inflow = inflow
         this.outflow = outflow == null ? BigDecimal.ZERO : outflow; //If outflow is null, this.outflow = 0 else this.outflow = outflow
@@ -61,9 +62,6 @@ public class Transaction {
         return payee;
     }
 
-    public String getCategory() {
-        return category;
-    }
 
     public String getMemo() {
         return memo;
@@ -85,4 +83,6 @@ public class Transaction {
     public boolean isOutflow() {
         return outflow.compareTo(BigDecimal.ZERO) > 0;
     }
+
+
 }

@@ -10,12 +10,12 @@ import utils.MoneyUtils;
  * -Contains amount left
  */
 public class BudgetItem {
-    private String budgetItemName; //What is this item called?
+    private String budgetItemCategory; //What is this item called?
     private BudgetType type; //Enum list for allowed categories
     private BigDecimal amountToSpend; //How much is left?
 
-    public BudgetItem(String budgetItemName, BudgetType type, BigDecimal amountToSpend){
-        if(budgetItemName == null || budgetItemName.trim().isEmpty()){
+    public BudgetItem(String budgetItemCategory, BudgetType type, BigDecimal amountToSpend){
+        if(budgetItemCategory == null || budgetItemCategory.trim().isEmpty()){
             throw new IllegalArgumentException("Budget item name cannot be null or empty");
         }
         if(type == null){
@@ -25,7 +25,7 @@ public class BudgetItem {
             throw new IllegalArgumentException("Amount to spend cannot be null or negative when budget item is created");
         }
 
-        this.budgetItemName = budgetItemName;
+        this.budgetItemCategory = budgetItemCategory;
         this.type = type;
         this.amountToSpend = amountToSpend; //Keep an eye on this later, this may produce unwanted behavior
     }
@@ -63,8 +63,8 @@ public class BudgetItem {
      * Get the name of the budget item.
      * @return the budget item name
      */
-    public String getBudgetItemName() {
-        return budgetItemName;
+    public String getBudgetItemCategory(){
+        return budgetItemCategory;
     }
 
     /**
@@ -81,14 +81,5 @@ public class BudgetItem {
      */
     public BigDecimal getAmountToSpend() {
         return amountToSpend;
-    }
-
-    @Override
-    public String toString() {
-        return "BudgetItem{" +
-                "budgetItemName='" + budgetItemName + '\'' +
-                ", type=" + type +
-                ", amountToSpend=" + amountToSpend +
-                '}';
     }
 }

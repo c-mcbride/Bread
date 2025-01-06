@@ -17,15 +17,12 @@ public class UserAccount {
     private List<BudgetItem> fixedExpenses; //List of fixed expenses budget items
     private List<BudgetItem> variableExpenses;
     private BudgetItem toBeBudgted; //Holds money that needs to be delegated to budget items
-    private Set<String> categories; //Dynamic category list, will be used later for transaction choices
-
 
     public UserAccount(String accountName){
         this.accountName = accountName;
         this.bankAccounts = new ArrayList<>(); //Empty List
         this.fixedExpenses = new ArrayList<>();
         this.variableExpenses = new ArrayList<>();
-        this.categories = new HashSet<>();
         //When object is constructed, we created a To Be Budgeted item, of ENUM:TOBEBUDGTED, with zero dollars
         this.toBeBudgted = new BudgetItem("To Be Budgeted", BudgetType.TOBEBUDGTED, BigDecimal.ZERO);
     }
@@ -54,10 +51,9 @@ public class UserAccount {
      * @param name name of the budget item
      * @param amount amount of money to add to the item on creation
      */
-    public void addFixedBudgetItem(String name, BigDecimal amount){
-        validateBudgetItem(name, amount);
-        fixedExpenses.add(new BudgetItem(name, BudgetType.FIXED, amount));
-        addCategoryToSet(name);
+    public void addFixedBudgetItem(String category, BigDecimal amount){
+        validateBudgetItem(category, amount);
+        fixedExpenses.add(new BudgetItem(category, BudgetType.FIXED, amount));
     }
 
     /**
@@ -65,10 +61,9 @@ public class UserAccount {
      * @param name name of the budget item
      * @param amount amount of money to add once the item is created
      */
-    public void addVariableBudgetItem(String name, BigDecimal amount){
-        validateBudgetItem(name, amount);
-        variableExpenses.add(new BudgetItem(name, BudgetType. VARIABLE, amount));
-        addCategoryToSet(name);
+    public void addVariableBudgetItem(String category, BigDecimal amount){
+        validateBudgetItem(category, amount);
+        variableExpenses.add(new BudgetItem(category, BudgetType. VARIABLE, amount));
     }
 
     //Methods to add/remove bank accounts or budget Items
@@ -77,7 +72,7 @@ public class UserAccount {
     }
 
     /**
-     * Looks for bankaccount to remove 
+     * Looks for bankaccount to remove
      * @param bankAccount bankAccount to remove
      */
     public void removeBankAccount(BankAccount bankAccount){
@@ -104,20 +99,44 @@ public class UserAccount {
     }
 
     /**
-     * Add a new category, will be added when a new budget Item is created
-     * @param category these will be used for transactions later to pull money from
+     * Check to see if the string category that is passed in exists in the fixed or variable budgetItem list
+     * @param category name of the category field of the budgetItem we are looking for
+     * @return boolean describing if the budget item category exists in the BudgetItem list of the user account
      */
-    public void addCategoryToSet(String category){
-        categories.add(category);
+    public boolean isCategoryPresent(String category){
+        //Check to see if the category exists in the fixedExpenses List
+        for(BudgetItem item : fixedExpenses){
+            if(item.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return true;
+            }
+        }
+
+        //Check if the category exists in the variableExpenses list
+        for(BudgetItem item : variableExpenses){
+            if(item.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return true;
+            }
+        }
+
+        //Category not found in either list
+        return false;
     }
 
-    /**
-     * Checks to see if the category exists in the category set
-     * @param category this is what we are looking for
-     * @return boolean shows if the item is in the set or not
-     */
-    public boolean isValidCategory(String category){
-        return categories.contains(category);
+    public BudgetItem getBudgetItemByCategory(String category){
+        for(BudgetItem budgetItem : fixedExpenses){
+            if(budgetItem.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return budgetItem;
+            }
+        }
+
+        for(BudgetItem budgetItem: variableExpenses){
+            if(budgetItem.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return budgetItem;
+            }
+        }
+
+        //If nothing is found
+        return null;
     }
 
     /**
@@ -148,13 +167,6 @@ public class UserAccount {
         }
 
         return null;
-    }
-    /**
-     * Used to get the full list of budget categories
-     * @return set of categories associated with the user account
-     */
-    public Set<String> getCategories(){
-        return Collections.unmodifiableSet(categories);
     }
 
     private void validateBudgetItem(String name, BigDecimal amount){
