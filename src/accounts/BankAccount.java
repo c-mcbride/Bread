@@ -1,6 +1,7 @@
 package accounts;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import utils.MoneyUtils;
@@ -77,6 +78,6 @@ public class BankAccount {
     }
 
     public List<Transaction> getTransactions(){
-        return this.transactions;
+        return Collections.unmodifiableList(transactions); //Returns a read-only view of the transactions
     }
 }

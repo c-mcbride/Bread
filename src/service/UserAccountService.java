@@ -31,26 +31,6 @@ public class UserAccountService {
         }
     }
 
-    /**Nam
-     * Takes Fixed and Variable expenses from Account class and formats them for console print
-     * @return budgetString formated for viewing
-     */
-    public String viewBankAccountAndBudget(){
-        StringBuilder budgetSummary = new StringBuilder();
-
-        budgetSummary.append("\nFixed Expenses: \n");
-        for (BudgetItem item : userAccount.getFixedExpenses()){
-            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
-        }
-
-        budgetSummary.append("\nVariable Expenses:\n");
-        for(BudgetItem item : userAccount.getVariableExpenses()){
-            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
-        }
-
-        return budgetSummary.toString();
-    }
-
     public void addBankAccount(BankAccount bankAccount){
         userAccount.addBankAccount(bankAccount);
     }
@@ -69,6 +49,86 @@ public class UserAccountService {
     public List<BankAccount> getBankAccounts(){
         return userAccount.getBankAccounts();
     }
+
+
+    /**
+     * Check to see if the string category that is passed in exists in the fixed or variable budgetItem list
+     * @param category name of the category field of the budgetItem we are looking for
+     * @return boolean describing if the budget item category exists in the BudgetItem list of the user account
+     */
+    public boolean isCategoryPresent(String category){
+        List<BudgetItem> fixedExpenses = userAccount.getFixedExpenses();
+        List<BudgetItem> variableExpenses = userAccount.getVariableExpenses();
+
+        for(BudgetItem item : fixedExpenses){
+            if(item.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return true;
+            }
+        }
+
+        for(BudgetItem item : variableExpenses){
+            if(item.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Search the user account fixed and variable expenses list to find if a budget item name matches param string
+     * @param category budgetItem category string to search the budgetItem list for
+     * @return budgetItem object if it is found, null if it is not
+     */
+    public BudgetItem getBudgetItemByCategory(String category){
+        List<BudgetItem> fixedExpenses = userAccount.getFixedExpenses();
+        List<BudgetItem> variableExpenses = userAccount.getVariableExpenses();
+
+        for(BudgetItem budgetItem : fixedExpenses){
+            if(budgetItem.getBudgetItemCategory().equalsIgnoreCase(category)){
+                return budgetItem;
+            }
+        }
+
+        for(BudgetItem budgetItem : variableExpenses){
+            if(budgetItem.getBudgetItemCategory().equals(category)){
+                return budgetItem;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks to see if there is an account with the given name in the list, if not returns null..if so return that account
+     * @param name entered name for the bank account
+     * @return the bankaccount with the given name if it exists
+     */
+    public BankAccount getBankAccountByName(String accountName){
+        for(BankAccount account : userAccount.getBankAccounts()){
+            if(account.getName().equalsIgnoreCase(accountName)){
+                return account;
+            }
+        }
+        System.out.println("bank account sending null");
+        return null;
+    }
+
+    /**
+     * Validates if a BankAccount with the given name exists in UserAccount
+     * @param name name of the bank account to check for
+     * @return boolean of it the account exists or not
+     */
+    public boolean hasBankAccount(String name){
+        for(BankAccount account : userAccount.getBankAccounts()){
+            if(account.getName().equalsIgnoreCase(name)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Method to build a string that formats the balance nicely to the console
@@ -89,6 +149,27 @@ public class UserAccountService {
             }
         }
         return bankAccountSummary.toString();
+    }
+
+
+    /**
+     * Takes Fixed and Variable expenses from Account class and formats them for console print
+     * @return budgetString formated for viewing
+     */
+    public String viewBankAccountAndBudget(){
+        StringBuilder budgetSummary = new StringBuilder();
+
+        budgetSummary.append("\nFixed Expenses: \n");
+        for (BudgetItem item : userAccount.getFixedExpenses()){
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+        }
+
+        budgetSummary.append("\nVariable Expenses:\n");
+        for(BudgetItem item : userAccount.getVariableExpenses()){
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+        }
+
+        return budgetSummary.toString();
     }
 
     /**
@@ -138,28 +219,6 @@ public class UserAccountService {
         return budgetSummary.toString();
     }
 
-    public Set<String> getValidCategories(){
-        return userAccount.getCategories();
-    }
-
-    public boolean isValidBankAccount(String accountName){
-        return userAccount.hasBankAccount(accountName);
-    }
-
-    public boolean isValidCategory(String category){
-        return userAccount.isValidCategory(category);
-    }
-
-    public BankAccount getBankAccountByName(String accountName){
-        for(BankAccount account : userAccount.getBankAccounts()){
-            if(account.getName().equalsIgnoreCase(accountName)){
-                return account;
-            }
-        }
-        System.out.println("bank account sending null");
-        return null;
-    }
-
     /**
      * Method to build a string that formats the balance nicely to the console
      * @return String showing bank account summaries
@@ -198,5 +257,4 @@ public class UserAccountService {
         }
         System.out.println("--------------------------------");
     }
-
 }

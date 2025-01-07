@@ -83,6 +83,4 @@ public class Transaction {
     public boolean isOutflow() {
         return outflow.compareTo(BigDecimal.ZERO) > 0;
     }
-
-
 }

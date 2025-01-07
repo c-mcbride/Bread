@@ -12,19 +12,20 @@ import java.time.LocalDate;
 
 
 public class TransactionService {
-    private final UserAccount userAccount;
+    //Instead of allowing the transaction service to access the user account directly, we will use the account service
+    private final UserAccountService userAccountService;
 
-    public TransactionService(UserAccount userAccount){
-        if(userAccount == null){
-            throw new IllegalArgumentException("UserAccount must not be null");
+    public TransactionService(UserAccountService userAccountService){
+        if(userAccountService == null){
+            throw new IllegalArgumentException("UserAccountService must not be null");
         }
-        this.userAccount = userAccount;
+        this.userAccountService = userAccountService;
     }
 
     /**
      *
      * @param dateStr string date, will be fixed via DateUtils, defaults to today it something is off
-     * @param bankAccount bankAccount that will hold the created transaction
+     * @param bankAccountName bankAccount that will hold the created transaction, entered as a string which is used to find the object
      * @param payee Who gets the money or provides the inflow
      * @param category What budget item will provide the money. Left as a string so the front end doesnt have to worry about finding it
      * @param memo optional memos
@@ -32,26 +33,41 @@ public class TransactionService {
      * @param outflow if money is outflow, it takes away from the category
      * @return transaction object
      */
-    public Transaction createTransaction(String dateStr, BankAccount bankAccount, String payee, String category, String memo, BigDecimal inflow, BigDecimal outflow){
-        if(userAccount == null || bankAccount == null || payee == null){
+    public Transaction createTransaction(String dateStr, String bankAccountName, String payee, String category, String memo, BigDecimal inflow, BigDecimal outflow){
+        if(bankAccountName == null || payee == null){
             throw new IllegalArgumentException("UserAccount, BankAccount, and Payee must not be null ");
         }
         //Validate and parse date using DateUtils. If valid, date = date, else date = current date
         LocalDate date = DateUtils.getDateOrDefault(dateStr);
 
-        if(!userAccount.isCategoryPresent(category)){
+        if(!userAccountService.isCategoryPresent(category)){
             throw new IllegalArgumentException("Invalid category: " + category);
         }
 
-        //We need to get the budgetItem to create a transaction object
-        BudgetItem budgetItem = userAccount.getBudgetItemByCategory(category);
+        //Find the bank account object
+        BankAccount bankAccount = userAccountService.getBankAccountByName(bankAccountName);
+        if(bankAccount == null){
+            throw new IllegalArgumentException("Bank Account not found: " + bankAccountName);
+        }
 
-        //Create the transaction
+        //We need to get the budgetItem to create a transaction object
+        BudgetItem budgetItem = userAccountService.getBudgetItemByCategory(category);
+        if(budgetItem == null){
+            throw new IllegalArgumentException("BudgetItem not found for category: " + category);
+        }
+
+        //Create the transaction to store in the bank account list
         Transaction transaction = new Transaction(date, bankAccount, payee, budgetItem, memo, inflow, outflow);
 
-        //Add the transaction to the BankAccount's transaction list
-        bankAccount.addTransaction(transaction);
+
 
         return transaction;
     }
+
+    private LocalDate parseDate(String dateStr){
+        return DateUtils.getDateOrDefault(dateStr);
+    }
+
+
+
 }
