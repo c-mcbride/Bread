@@ -34,7 +34,7 @@ public class TransactionService {
      * @return transaction object
      */
     public Transaction createTransaction(String dateStr, String bankAccountName, String payee, String category, String memo, BigDecimal inflow, BigDecimal outflow){
-        if(bankAccountName == null || payee == null){
+        if(bankAccountName == null || payee == null || category == null){
             throw new IllegalArgumentException("UserAccount, BankAccount, and Payee must not be null ");
         }
         //Validate and parse date using DateUtils. If valid, date = date, else date = current date
@@ -59,15 +59,33 @@ public class TransactionService {
         //Create the transaction to store in the bank account list
         Transaction transaction = new Transaction(date, bankAccount, payee, budgetItem, memo, inflow, outflow);
 
-
+        //Apply the transaction so bank account balance and budget item amount remaining are updated
+        applyTransaction(transaction, bankAccount, budgetItem);
 
         return transaction;
     }
 
-    private LocalDate parseDate(String dateStr){
-        return DateUtils.getDateOrDefault(dateStr);
+    /**
+     * Applies a transaction to the bank account and budget item.
+     * If the transaction is inflow, money is added to both the bank account the budgetItem amount to spend
+     * if the transaction is outflow, money is withdrawn from the bank account and subtracted from the budget item
+     *
+     * @param transaction transaction object will be added to bankaccount list
+     * @param bankAccount the bankAccount to which this transaction needs to be applied
+     * @param budgetItem the budgetItem itself so we can see if we need to add or subtract from amount left to spend
+     */
+    private void applyTransaction(Transaction transaction, BankAccount bankAccount, BudgetItem budgetItem){
+        //Add the transaction to the bank account list
+        bankAccount.addTransaction(transaction);
+
+        //If the budget item is inflow, we add money to the budget item amount left to spend
+        if(transaction.isInflow()){
+            bankAccount.deposit(transaction.getInflow());
+            budgetItem.addMoneyToCategory(transaction.getInflow());
+        }
+        else if (transaction.isOutflow()){
+            bankAccount.withdraw(transaction.getOutflow());
+            budgetItem.subtractMoneyFromCategory(transaction.getOutflow())
+        }
     }
-
-
-
 }

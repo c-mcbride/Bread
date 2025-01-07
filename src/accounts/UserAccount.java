@@ -2,10 +2,8 @@ package accounts;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.math.BigDecimal;
-import java.util.Set;
 
 /**
  * This class stores a user account, it has a name,
