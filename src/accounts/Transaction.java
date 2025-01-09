@@ -75,6 +75,10 @@ public class Transaction {
         return outflow;
     }
 
+    public String getCategory(){
+        return budgetItem.getBudgetItemCategory();
+    }
+
     // For UI: Returns whether this transaction is an inflow or outflow
     public boolean isInflow() {
         return inflow.compareTo(BigDecimal.ZERO) > 0;

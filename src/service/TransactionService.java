@@ -19,6 +19,7 @@ public class TransactionService {
         if(userAccountService == null){
             throw new IllegalArgumentException("UserAccountService must not be null");
         }
+       
         this.userAccountService = userAccountService;
     }
 
@@ -85,7 +86,7 @@ public class TransactionService {
         }
         else if (transaction.isOutflow()){
             bankAccount.withdraw(transaction.getOutflow());
-            budgetItem.subtractMoneyFromCategory(transaction.getOutflow())
+            budgetItem.subtractMoneyFromCategory(transaction.getOutflow());
         }
     }
 }

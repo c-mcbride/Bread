@@ -22,7 +22,7 @@ public class UserAccount {
         this.fixedExpenses = new ArrayList<>();
         this.variableExpenses = new ArrayList<>();
         //When object is constructed, we created a To Be Budgeted item, of ENUM:TOBEBUDGTED, with zero dollars
-        this.toBeBudgted = new BudgetItem("To Be Budgeted", BudgetType.TOBEBUDGTED, BigDecimal.ZERO);
+        this.toBeBudgted = new BudgetItem("To Be Budgeted", BudgetType.TOBEBUDGTED);
     }
 
     //Getters
@@ -49,9 +49,9 @@ public class UserAccount {
      * @param name name of the budget item
      * @param amount amount of money to add to the item on creation
      */
-    public void addFixedBudgetItem(String category, BigDecimal amount){
-        validateBudgetItem(category, amount);
-        fixedExpenses.add(new BudgetItem(category, BudgetType.FIXED, amount));
+    public void addFixedBudgetItem(String category){
+        validateBudgetItem(category);
+        fixedExpenses.add(new BudgetItem(category, BudgetType.FIXED));
     }
 
     /**
@@ -59,9 +59,9 @@ public class UserAccount {
      * @param name name of the budget item
      * @param amount amount of money to add once the item is created
      */
-    public void addVariableBudgetItem(String category, BigDecimal amount){
-        validateBudgetItem(category, amount);
-        variableExpenses.add(new BudgetItem(category, BudgetType. VARIABLE, amount));
+    public void addVariableBudgetItem(String category){
+        validateBudgetItem(category);
+        variableExpenses.add(new BudgetItem(category, BudgetType.VARIABLE));
     }
 
     //Methods to add/remove bank accounts or budget Items
@@ -84,8 +84,12 @@ public class UserAccount {
      * Used to modify the toBeBudget object variable
      * @param toBeBudgted the amount to add to the toBeBudgeted category
      */
-    public void addAmountToBeBudgted(BigDecimal toBeBudgted){
-        this.toBeBudgted.addMoneyToCategory(toBeBudgted);
+    public void addAmountToBeBudgted(BigDecimal amountToAdd){
+        toBeBudgted.addMoneyToCategory(amountToAdd);
+    }
+
+    public void subtractToBeBudgeted(BigDecimal amountToSubtract){
+        toBeBudgted.subtractMoneyFromCategory(amountToSubtract)
     }
 
     /**
@@ -93,16 +97,13 @@ public class UserAccount {
      * @return amount to spend in the to be budgeted category
      */
     public BigDecimal getAmountToBeBudgeted(){
-        return this.toBeBudgted.getAmountToSpend();
+        return toBeBudgted.getAmountToSpend();
     }
 
 
-    private void validateBudgetItem(String name, BigDecimal amount){
-        if (name == null || name.isBlank()) {
+    private void validateBudgetItem(String category){
+        if (category == null || category.isBlank()) {
             throw new IllegalArgumentException("Budget item name cannot be null or blank");
-        }
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount must be a non-negative value");
         }
     }
 }

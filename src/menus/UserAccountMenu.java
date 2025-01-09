@@ -21,7 +21,7 @@ public class UserAccountMenu {
 
     public UserAccountMenu(UserAccount userAccount){
         this.userAccountService = new UserAccountService(userAccount);
-        this.transactionService = new TransactionService(userAccount);
+        this.transactionService = new TransactionService(userAccountService);
     }
 
     public void showUserMenu(){
@@ -88,8 +88,8 @@ public class UserAccountMenu {
         //Get date
         String date = getTransactionDate();
 
-        //Collecting bank account
-        BankAccount bankAccount = selectBankAccount();
+        //Collecting bank account string as the transaction constructer expects it
+        String bankAccount = getBankAccountNameString();
 
         //Collecting payee
         String payee = getValidPayee();
@@ -190,7 +190,7 @@ public class UserAccountMenu {
             System.out.println("Enter BudgetCategory: ");
             String category = scanner.nextLine().trim();
 
-            if(userAccountService.isValidCategory(category)){
+            if(userAccountService.isCategoryPresent(category)){
                 return category;
             }
             else{
@@ -223,26 +223,27 @@ public class UserAccountMenu {
 
     /**
      * Search for a bankaccount from the list by name
-     * @return BankAccount of the given name
+     * @return BankAccount Name String
+     *
      */
-    private BankAccount selectBankAccount(){
+     private String getBankAccountNameString(){
         while(true){
-            //Display bank accounts
-            System.out.println(userAccountService.viewBankAccountsString());
+            //Prompt the user for input
             System.out.println("Enter the bank account name: ");
             String accountName = scanner.nextLine().trim();
 
-            if(userAccountService.isValidBankAccount(accountName)){
-                return userAccountService.getBankAccountByName(accountName);
+            //Check if the input is valid
+            if(!accountName.isEmpty()){
+                return accountName;
             }
             else{
-                System.out.println("Invalid bank account name. Please enter a valid bank account name. ");
+                System.out.println("Bank Account name cannot be empty. Please try again.");
             }
         }
-    }
+     }
 
     public void displayTransactionList(){
-        BankAccount bankAccountToDisplay = selectBankAccount();
+        BankAccount bankAccountToDisplay = userAccountService.getBankAccountByName(getBankAccountNameString());
 
         //Use the bankAccount service of the account to utilize service layer
         BankAccountService bankAccountService = new BankAccountService(bankAccountToDisplay);
@@ -383,8 +384,8 @@ public class UserAccountMenu {
     private void addBudgetItem(BudgetType type){
         System.out.println("Adding a  " + type + " Budget Item: ");
         String itemName = getValidBudgetItemName();
-        BigDecimal amount = getValidBudgetAmount();
-        userAccountService.addBudgetItem(itemName, type, amount);
+
+        userAccountService.addBudgetItem(itemName, type);
     }
 
      /**

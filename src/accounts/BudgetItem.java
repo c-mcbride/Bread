@@ -14,20 +14,17 @@ public class BudgetItem {
     private BudgetType type; //Enum list for allowed categories
     private BigDecimal amountToSpend; //How much is left?
 
-    public BudgetItem(String budgetItemCategory, BudgetType type, BigDecimal amountToSpend){
+    public BudgetItem(String budgetItemCategory, BudgetType type){
         if(budgetItemCategory == null || budgetItemCategory.trim().isEmpty()){
             throw new IllegalArgumentException("Budget item name cannot be null or empty");
         }
         if(type == null){
             throw new IllegalArgumentException("Type cannot be null");
         }
-        if(amountToSpend == null || amountToSpend.compareTo(BigDecimal.ZERO) < 0){
-            throw new IllegalArgumentException("Amount to spend cannot be null or negative when budget item is created");
-        }
-
+        
         this.budgetItemCategory = budgetItemCategory;
         this.type = type;
-        this.amountToSpend = amountToSpend; //Keep an eye on this later, this may produce unwanted behavior
+        this.amountToSpend = BigDecimal.ZERO; //When the budget item is created, should default to 0
     }
 
     /**
@@ -48,13 +45,13 @@ public class BudgetItem {
      * @param amount to subtract from category
      * @return updated amount avaliable for category
      */
-    public BigDecimal subtractMoneyFromCategory(BigDecimal amountToSpend){
-        if (amountToSpend == null || !MoneyUtils.isValidAmount(amountToSpend)){
+    public BigDecimal subtractMoneyFromCategory(BigDecimal amountToSubtract){
+        if (amountToSubtract == null || !MoneyUtils.isValidAmount(amountToSubtract)){
             throw new IllegalArgumentException("Amount to spend must be greater than 0");
         }
 
         //This subtracts the money left over for the category to spend and return it, this can be negative
-        amountToSpend = this.amountToSpend.subtract(MoneyUtils.round(amountToSpend));
+        amountToSpend = amountToSpend.subtract(MoneyUtils.round(amountToSubtract));
         return amountToSpend;
     }
 

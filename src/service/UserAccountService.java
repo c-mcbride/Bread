@@ -1,7 +1,6 @@
 package service;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 import accounts.BudgetItem;
 import accounts.BudgetType;
@@ -22,12 +21,12 @@ public class UserAccountService {
      * @param type ENUM type: Fixed or Variable
      * @param amountToSpend Inital amount availble for budget item
      */
-    public void addBudgetItem(String budgetItemName, BudgetType type, BigDecimal amountToSpend){
+    public void addBudgetItem(String budgetItemName, BudgetType type){
         if(type == BudgetType.FIXED){
-            userAccount.addFixedBudgetItem(budgetItemName, amountToSpend);
+            userAccount.addFixedBudgetItem(budgetItemName);
         }
         else if (type == BudgetType.VARIABLE){
-            userAccount.addVariableBudgetItem(budgetItemName, amountToSpend);
+            userAccount.addVariableBudgetItem(budgetItemName);
         }
     }
 
@@ -161,12 +160,12 @@ public class UserAccountService {
 
         budgetSummary.append("\nFixed Expenses: \n");
         for (BudgetItem item : userAccount.getFixedExpenses()){
-            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemCategory(), item.getAmountToSpend()));
         }
 
         budgetSummary.append("\nVariable Expenses:\n");
         for(BudgetItem item : userAccount.getVariableExpenses()){
-            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemCategory(), item.getAmountToSpend()));
         }
 
         return budgetSummary.toString();
@@ -205,7 +204,7 @@ public class UserAccountService {
         budgetSummary.append(String.format("%-20s %-20s%n", "Item Name", "Amount"));
         budgetSummary.append("-------------------------------------------------\n");
         for (BudgetItem item : userAccount.getFixedExpenses()) {
-            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemCategory(), item.getAmountToSpend()));
         }
 
         // Add variable expenses section
@@ -213,7 +212,7 @@ public class UserAccountService {
         budgetSummary.append(String.format("%-20s %-20s%n", "Item Name", "Amount"));
         budgetSummary.append("-------------------------------------------------\n");
         for (BudgetItem item : userAccount.getVariableExpenses()) {
-            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemName(), item.getAmountToSpend()));
+            budgetSummary.append(String.format("%-20s $%.2f%n", item.getBudgetItemCategory(), item.getAmountToSpend()));
         }
 
         return budgetSummary.toString();
@@ -243,17 +242,41 @@ public class UserAccountService {
     * Formats and prints the valid categories associated with the user account.
     */
     public void printCategories() {
-        Set<String> categories = userAccount.getCategories();
+        //Retrieve the fixed and variable budget items
+        List<BudgetItem> fixedExpenses = userAccount.getFixedExpenses();
+        List<BudgetItem> variableExpenses = userAccount.getVariableExpenses();
 
-        if (categories == null || categories.isEmpty()) {
-            System.out.println("No categories available.");
+        //Check if there are any categories avaliable to print
+        if((fixedExpenses == null || fixedExpenses.isEmpty()) && (variableExpenses == null || variableExpenses.isEmpty())){
+            System.out.println("No categories avaliable");
             return;
         }
 
-        System.out.println("\nCategories:");
+        //Print fixed categories
+        System.out.println("\nFixed Expenses");
         System.out.println("--------------------------------");
-        for (String category : categories) {
-            System.out.println("- " + category);
+
+        if(fixedExpenses != null && !fixedExpenses.isEmpty()){
+            for(BudgetItem item : fixedExpenses){
+                System.out.println("- " + item.getBudgetItemCategory() + " (" + item.getAmountToSpend() + ")");
+            }
+        }
+        else{
+            System.out.println("No fixed categories. ");
+        }
+        System.out.println("--------------------------------");
+
+        //Print variable categories
+        System.out.println("\nVariable Expenses");
+        System.out.println("--------------------------------");
+
+        if(variableExpenses != null && !variableExpenses.isEmpty()){
+            for(BudgetItem item : variableExpenses){
+                System.out.println("- " + item.getBudgetItemCategory()+ " (" + item.getAmountToSpend()+ ") ");
+            }
+        }
+        else{
+            System.out.println("No variable categories. ");
         }
         System.out.println("--------------------------------");
     }
