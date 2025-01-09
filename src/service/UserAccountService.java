@@ -5,6 +5,7 @@ import java.util.List;
 import accounts.BudgetItem;
 import accounts.BudgetType;
 import accounts.UserAccount;
+import utils.MoneyUtils;
 import accounts.BankAccount;
 
 //Service Layer for User Accounts to seperate buisness logic from Inputs
@@ -83,6 +84,11 @@ public class UserAccountService {
         List<BudgetItem> fixedExpenses = userAccount.getFixedExpenses();
         List<BudgetItem> variableExpenses = userAccount.getVariableExpenses();
 
+        //If we need the solo to be Budgeted Category, we get it here
+        if(category.equalsIgnoreCase("To Be Budgeted")){
+            return userAccount.getToBeBudgted();
+        }
+
         for(BudgetItem budgetItem : fixedExpenses){
             if(budgetItem.getBudgetItemCategory().equalsIgnoreCase(category)){
                 return budgetItem;
@@ -96,6 +102,44 @@ public class UserAccountService {
         }
 
         return null;
+    }
+
+    /**
+     * Takes two strings, a source and destination, and moves money between the categories
+     * Includes functionality to move money from to be budgeted to other places
+     * @param sourceCategory the category providing the funds
+     * @param targetCategory where the funds are going
+     * @param amountToMove how much money to move
+     */
+    public void moveMoneyBetweenCategories(String sourceCategory, String targetCategory, BigDecimal amountToMove){
+        if(sourceCategory == null || targetCategory == null || amountToMove == null){
+            throw new IllegalArgumentException("When moving money, Source, target, and amount must not be null");
+        }
+        if(amountToMove.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("Amount of money that you are moving must be greater than 0");
+        }
+
+        //Use the getBudgetItemByCategory method to find the object's from the string
+        BudgetItem sourceBudgetItem = getBudgetItemByCategory(sourceCategory);
+        BudgetItem targetBudgetItem = getBudgetItemByCategory(targetCategory);
+
+        if(sourceBudgetItem == null){
+            throw new IllegalArgumentException("Source category not found: " + sourceCategory);
+        }
+
+        if(targetBudgetItem == null){
+            throw new IllegalArgumentException("Target category not found: " + targetCategory);
+        }
+
+        //Check to make sure that the source budget Item has enough avaliable to move
+        BigDecimal availableAmount = sourceBudgetItem.getAmountToSpend();
+        if(availableAmount.compareTo(amountToMove) < 0){
+            throw new IllegalArgumentException("Insufficient funds in source category: Available " + availableAmount + ", Requested " + amountToMove);
+        }
+
+        //Perform the transfer i.e subtract from source and add to target
+        sourceBudgetItem.subtractMoneyFromCategory(amountToMove);
+        targetBudgetItem.addMoneyToCategory(amountToMove);
     }
 
     /**
@@ -127,7 +171,6 @@ public class UserAccountService {
 
         return false;
     }
-
 
     /**
      * Method to build a string that formats the balance nicely to the console

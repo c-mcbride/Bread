@@ -21,7 +21,7 @@ public class BudgetItem {
         if(type == null){
             throw new IllegalArgumentException("Type cannot be null");
         }
-        
+
         this.budgetItemCategory = budgetItemCategory;
         this.type = type;
         this.amountToSpend = BigDecimal.ZERO; //When the budget item is created, should default to 0
@@ -36,7 +36,7 @@ public class BudgetItem {
         if(!MoneyUtils.isValidAmount(amountToAdd)){
             throw new IllegalArgumentException("Amount to add must be greater than zero");
         }
-        amountToSpend = amountToSpend.add(amountToAdd);
+        amountToSpend = amountToSpend.add(MoneyUtils.round(amountToAdd));
         return amountToSpend;
     }
 

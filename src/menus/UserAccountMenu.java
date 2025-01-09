@@ -35,7 +35,8 @@ public class UserAccountMenu {
             System.out.println("4. View Complete Budget");
             System.out.println("5. Add Transaction");
             System.out.println("6. View Transactions for BankAccount");
-            System.out.println("7. Exit");
+            System.out.println("7. Transfer Budget Amount");
+            System.out.println("8. Exit");
 
             if(scanner.hasNextInt()){
                 choice = scanner.nextInt();
@@ -67,6 +68,8 @@ public class UserAccountMenu {
                         displayTransactionList();
                         break;
                     case 7:
+                        transferBudgetAmount();
+                    case 8:
                         System.out.println("Exiting Account Menu");
                         break;
                     default:
@@ -76,7 +79,7 @@ public class UserAccountMenu {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        while (choice != 7);
+        while (choice != 8);
     }
 
     private void addTransaction(){
@@ -339,9 +342,9 @@ public class UserAccountMenu {
      * Validates inital amount to make sure that it is not negative
      * @return non-negative big decimal
      */
-    private BigDecimal getValidBudgetAmount(){
+    private BigDecimal getValidBudgetTransferAmount(){
         while(true){
-            System.out.println("Enter the starting amount for the budget item: ");
+            System.out.println("Enter the amount you wish to transfer: ");
             if(scanner.hasNextBigDecimal()){
                 BigDecimal amount = scanner.nextBigDecimal();
                 scanner.nextLine(); // clear te newline character
@@ -363,9 +366,9 @@ public class UserAccountMenu {
      * Validates budget Item name to make sure it is not zero
      * @return non-empty string
      */
-    private String getValidBudgetItemName(){
+    private String getValidBudgetCategoryName(String identifier){
         while(true){
-            System.out.println("Enter Budget item name: ");
+            System.out.println("Enter Budget " + identifier + " item name: ");
             String itemName = scanner.nextLine().trim();
             if(!itemName.isEmpty()){
                 return itemName;
@@ -383,9 +386,34 @@ public class UserAccountMenu {
      */
     private void addBudgetItem(BudgetType type){
         System.out.println("Adding a  " + type + " Budget Item: ");
-        String itemName = getValidBudgetItemName();
+        String identifier = "";
+        String categoryName = getValidBudgetCategoryName(identifier);
 
-        userAccountService.addBudgetItem(itemName, type);
+        userAccountService.addBudgetItem(categoryName, type);
+    }
+
+    private void transferBudgetAmount(){
+        System.out.println("\n");
+        System.out.println("Transfer budget amount......");
+
+        //Get source category
+        String identifier = "source";
+        String sourceCategory = getValidBudgetCategoryName(identifier);
+
+        //Get destination category
+        identifier = "desination";
+        String destinationCategory = getValidBudgetCategoryName(identifier);
+
+        //Get the transfer amount
+        BigDecimal transferAmount = getValidBudgetTransferAmount();
+
+        try{
+            userAccountService.moveMoneyBetweenCategories(sourceCategory, destinationCategory, transferAmount);
+            System.out.println("Budget amount transferred successfully. ");
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
      /**

@@ -44,6 +44,11 @@ public class UserAccount {
         return bankAccounts;
     }
 
+    //Get the entire toBeBudgeted object
+    public BudgetItem getToBeBudgted(){
+        return toBeBudgted;
+    }
+
     /**
      * Adds to the fixed expenses budget Item list
      * @param name name of the budget item
