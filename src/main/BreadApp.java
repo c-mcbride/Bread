@@ -2,8 +2,8 @@ package main;
 import java.util.Scanner;
 
 import accounts.UserAccount;
-import menus.CreateUserAccountMenu;
 import menus.UserAccountMenu;
+import service.AccountManagerService;
 
 /*
  * Runs the console menu for the application. Will not be used in javafx application but used here for programming
@@ -11,7 +11,12 @@ import menus.UserAccountMenu;
  */
 public class BreadApp {
     private UserAccount userAccount;
+    private AccountManagerService accountManagerService;
     private Scanner scanner = new Scanner(System.in);
+
+    public BreadApp(){
+        this.accountManagerService = new AccountManagerService();
+    }
 
     public void run(){
         System.out.println("Welcome to bread!");
@@ -20,13 +25,14 @@ public class BreadApp {
         do{
             displayMenu();
             choice = scanner.nextInt();
+            scanner.nextLine();
 
             switch(choice){
                 case 1:
                     createUserAccount();
                     break;
                 case 2:
-                    modifyUserAccount();
+                    loginToAccount();
                     break;
                 case 3:
                     System.out.println("Exiting Bread....Goodbye!");
@@ -42,25 +48,63 @@ public class BreadApp {
     //Helper function to create the menu display
     private void displayMenu(){
         System.out.println("1. Create User Account");
-        System.out.println("2. Access/Modify Budget");
+        System.out.println("2. Login to Account");
         System.out.println("3. Exit");
         System.out.print("Enter your choice: ");
     }
 
-    //Uses the createAccout menu to make a new account
+    //The addAccount method of the UserAccountService creates the account with hashed pin...really we just need strings
     private void createUserAccount(){
-        CreateUserAccountMenu userAccountMenu = new CreateUserAccountMenu();
-        userAccount = userAccountMenu.createUserAccount();
+        String userName = getValidUserName();
+        String pin = getValidPin();
+        accountManagerService.addAccount(userName, pin);
     }
 
     //Modify an account, if it exists
-    private void modifyUserAccount(){
-        if (userAccount== null){
-            System.out.println("No account exists. Please create an account first");
+    private void loginToAccount(){
+        if(!accountManagerService.hasAccounts()){
+            System.out.println("No accounts exist. Please create an account first. ");
+            return;
         }
-        else{
+
+        System.out.println("Enter username: ");
+        String username = scanner.nextLine().trim();
+        System.out.println("Enter PIN: ");
+        String pin = scanner.nextLine().trim();
+
+        try{
+            UserAccount userAccount = accountManagerService.login(username, pin);
+            System.out.println("Login successful! Welcome, " + username);
             UserAccountMenu userAccountMenu = new UserAccountMenu(userAccount);
             userAccountMenu.showUserMenu();
+        }
+        catch(IllegalArgumentException e){
+            System.out.println("Login failed: " + e.getMessage());
+        }
+
+    }
+
+    public String getValidUserName(){
+        while(true){
+            System.out.println("Enter account name: ");
+            String userName = scanner.nextLine().trim();
+            if(!userName.isEmpty()){
+                return userName;
+            }
+
+            System.out.println("Error: Name cannot be empty. Pleast try again. ");
+        }
+    }
+
+    public String getValidPin(){
+        while(true){
+            System.out.println("Enter PIN number: ");
+            String pin = scanner.nextLine().trim();
+            if(!pin.isEmpty()){
+                return pin;
+            }
+
+            System.out.println("Error: PIN cannot be empty. Please Try Again");
         }
     }
 }

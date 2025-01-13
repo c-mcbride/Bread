@@ -9,7 +9,8 @@ public class CreateUserAccountMenu {
 
     public UserAccount createUserAccount() throws IllegalArgumentException{
         String name = getValidUsername();
-        return new UserAccount(name);
+        String pin = getValidPin();
+        return new UserAccount(name, pin);
     }
 
     /**
@@ -25,6 +26,18 @@ public class CreateUserAccountMenu {
             }
 
             System.out.println("Error: Name cannot be empty. Please try again");
+        }
+    }
+
+    private String getValidPin(){
+        while(true){
+            System.out.println("Enter PIN number: ");
+            String pin = scanner.nextLine().trim();
+            if(!pin.isEmpty()){
+                return pin;
+            }
+
+            System.out.println("Error: PIN cannot be empty. Please try again");
         }
     }
 }

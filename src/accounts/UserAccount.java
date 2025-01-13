@@ -113,4 +113,12 @@ public class UserAccount {
             throw new IllegalArgumentException("Budget item name cannot be null or blank");
         }
     }
+
+    /**
+     * Return the hashed pin to the caller
+     * @return hashedPin as is
+     */
+    public String getHashedPin(){
+        return hashedPin;
+    }
 }

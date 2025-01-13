@@ -7,10 +7,9 @@ import java.util.Map;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
+//Stores hashed pin in the useraccount object, retrieves it from the user account for login validation
 public class AccountManagerService {
     private Map<String, UserAccount> userAccounts = new HashMap<>();
-
 
     /**
      * Adds a new user account with a hashed pin
@@ -26,7 +25,9 @@ public class AccountManagerService {
             throw new IllegalArgumentException("Account already exists with this name: " + userAccountName);
         }
         String hashedPin = hashPin(pin);
-        userAccounts.put(userAccountName, new UserAccount(userAccountName, hashedPin));
+        UserAccount userAccount = new UserAccount(userAccountName, hashedPin);
+
+        userAccounts.put(userAccountName, userAccount);
     }
 
     /**
@@ -82,7 +83,7 @@ public class AccountManagerService {
     }
 
     /**
-     * Validates a PIN by comparing its hash to the stored hash.
+     * Validates a PIN by comparing its hash to the stored hash. Gets the stored hash from the Account directly
      *
      * @param inputPin  The plain text PIN provided by the user.
      * @param storedHash THe hashed PIN stored in the system.
@@ -132,12 +133,20 @@ public class AccountManagerService {
     }
 
     /**
-     * Check if an account exists with the given name 
+     * Check if an account exists with the given name
      *
      * @param userAccountName userAccountName The name of the account to check
      * @return true if the account exists, false otherwise
      */
     public boolean accountExists(String userAccountName){
         return userAccounts.containsKey(userAccountName);
+    }
+
+    /**
+     * Check to see if there are accounts in the hashmap
+     * @return true if there are accounts in the list false otherwise
+     */
+    public boolean hasAccounts(){
+        return !userAccounts.isEmpty();
     }
 }
