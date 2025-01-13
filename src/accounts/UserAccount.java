@@ -11,13 +11,15 @@ import java.math.BigDecimal;
  */
 public class UserAccount {
     private String accountName;
+    private String hashedPin;
     private List<BankAccount> bankAccounts;
     private List<BudgetItem> fixedExpenses; //List of fixed expenses budget items
     private List<BudgetItem> variableExpenses;
     private BudgetItem toBeBudgted; //Holds money that needs to be delegated to budget items
 
-    public UserAccount(String accountName){
+    public UserAccount(String accountName, String hashedPin){
         this.accountName = accountName;
+        this.hashedPin = hashedPin;
         this.bankAccounts = new ArrayList<>(); //Empty List
         this.fixedExpenses = new ArrayList<>();
         this.variableExpenses = new ArrayList<>();
